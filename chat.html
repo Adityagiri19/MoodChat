@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoodChat - Your Safe Space</title>
+    <title>SoulChat - Your Safe Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -37,7 +37,7 @@
             --theme-accent: #FFAB66; /* Soft Orange */
             --theme-text-dark: #6B571A; /* Dark Gold Text */
             --theme-bubble-my: #FFF5CC; /* Lighter Golden Yellow for my bubbles */
-            --theme-bubble-other: #FFFBE6; /* Even Lighter for received */
+            --theme-bubble-other: #FFFBEBE6; /* Even Lighter for received */
         }
         body.theme-Sadness {
             --theme-primary: #8E9B9C; /* Deep Desaturated Blue-Grey */
@@ -382,19 +382,7 @@
         </div>
 
         <div id="chat-messages" class="chat-messages">
-            <div class="message-bubble received">
-                <div class="sender-info">🫂 GentleSoul42</div>
-                Hello everyone, feeling a bit overwhelmed today. Anyone else?
             </div>
-            <div class="message-bubble sent">
-                <div class="sender-info">♀️ WiseRiver99</div>
-                <p>You're not alone. It's okay to feel that way. Sending you warmth!</p>
-            </div>
-             <div class="message-bubble received">
-                <div class="sender-info">♂️ BraveCloud10</div>
-                <p>Same here. This space really helps.</p>
-            </div>
-        </div>
 
         <div id="typing-indicator" class="typing-indicator pl-4 text-sm text-gray-500 italic"></div>
 
@@ -417,7 +405,8 @@
         // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, deleteDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+        // Added 'limit' to the import list from firestore
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, deleteDoc, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js"; 
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
 
         // --- GLOBAL DECLARATIONS FOR THEME LOGIC ---
@@ -442,25 +431,17 @@
             const chatMessages = document.getElementById('chat-messages'); 
             const messageInput = document.getElementById('message-input'); 
             const sendButton = document.getElementById('send-button'); 
-            // const postLimitDisplay = document.getElementById('post-limit-display'); // Removed for unlimited chats
             const typingIndicatorElement = document.getElementById('typing-indicator'); 
             
             const dailyReflectionModal = document.getElementById('daily-reflection-modal'); 
             const closeReflectionModalButton = document.getElementById('close-reflection-modal-button'); 
             
-            // Removed payment modal related elements for unlimited chats
-            // const paymentModal = document.getElementById('payment-modal'); 
-            // const premiumButton = document.getElementById('premium-button'); 
-            // const closePaymentModalButton = document.getElementById('close-payment-modal-button');
-
             const themeSwitcherButton = document.getElementById('theme-switcher-button'); 
             const activeUsersElement = document.getElementById('active-users'); 
 
             let currentNickname = ''; 
             let currentRoomMood = ''; 
             let currentGenderSymbol = ''; 
-            // let messagesSentToday = 0; // Removed for unlimited chats
-            // const MAX_POSTS_PER_DAY = 30; // Removed for unlimited chats
 
             let db; // Firestore instance
             let auth; // Auth instance
@@ -551,12 +532,6 @@
                     return; 
                 }
 
-                // Removed post limit check for unlimited chats
-                // if (messagesSentToday >= MAX_POSTS_PER_DAY) { 
-                //     showPaymentModal(); 
-                //     return; 
-                // }
-
                 try {
                     // Generate a unique local ID for optimistic display
                     const localMessageId = 'local-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9); 
@@ -573,8 +548,6 @@
 
                     messageInput.value = ''; 
                     adjustTextareaHeight(); 
-                    // messagesSentToday++; // Removed for unlimited chats
-                    // updatePostLimitDisplay(); // Removed for unlimited chats
                     
                     // Clear typing status immediately after sending a message
                     setTypingStatus(false); 
@@ -600,7 +573,8 @@
             function setupRealtimeChat() {
                 chatMessages.innerHTML = ''; 
 
-                const q = query(collection(db, `chat_rooms/${currentRoomMood}/messages`), orderBy("timestamp")); 
+                // MODIFIED: Added limit(50) to fetch only the last 50 messages
+                const q = query(collection(db, `chat_rooms/${currentRoomMood}/messages`), orderBy("timestamp"), limit(50)); 
                 
                 onSnapshot(q, (snapshot) => { 
                     snapshot.docChanges().forEach((change) => { 
@@ -794,44 +768,9 @@
             }
 
 
-            // --- Post Limit Logic (using localStorage for daily reset) ---
-            // This entire section is removed for unlimited chats.
-            // function updatePostLimitDisplay() {
-            //     const remaining = MAX_POSTS_PER_DAY - messagesSentToday;
-            //     postLimitDisplay.textContent = `Posts left today: ${remaining}`;
-            //     if (remaining <= 0) {
-            //         messageInput.placeholder = "Daily limit reached. Go Premium!";
-            //         messageInput.disabled = true;
-            //         sendButton.disabled = true;
-            //         messageInput.classList.add('opacity-50', 'cursor-not-allowed');
-            //         sendButton.classList.add('opacity-50', 'cursor-not-allowed');
-            //         setTypingStatus(false); 
-            //     } else {
-            //         messageInput.placeholder = "Share your thoughts...";
-            //         messageInput.disabled = false;
-            //         sendButton.disabled = false;
-            //         messageInput.classList.remove('opacity-50', 'cursor-not-allowed');
-            //         sendButton.classList.remove('opacity-50', 'cursor-not-allowed');
-            //     }
-            // }
-
-            // function checkDailyPostLimit() {
-            //     const lastPostDate = localStorage.getItem('soulchat_last_post_date');
-            //     const today = new Date().toDateString();
-
-            //     if (lastPostDate === today) {
-            //         messagesSentToday = parseInt(localStorage.getItem('soulchat_posts_today') || '0');
-            //     } else {
-            //         messagesSentToday = 0; 
-            //         localStorage.setItem('soulchat_last_post_date', today);
-            //     }
-            //     updatePostLimitDisplay();
-            // }
-
             // Save post count on send
             sendButton.addEventListener('click', () => { 
                 sendMessage(); 
-                // localStorage.setItem('soulchat_posts_today', messagesSentToday.toString()); // Removed for unlimited chats
             });
 
             messageInput.addEventListener('keypress', (e) => { 
@@ -880,22 +819,6 @@
                 dailyReflectionModal.classList.remove('active'); 
             });
 
-            // --- Payment Prompt Modal ---
-            // This function is no longer needed but kept for reference if needed later
-            // function showPaymentModal() {
-            //     paymentModal.classList.add('active');
-            // }
-
-            // Removed payment modal event listeners
-            // closePaymentModalButton.addEventListener('click', () => { 
-            //     paymentModal.classList.remove('active'); 
-            // });
-
-            // premiumButton.addEventListener('click', () => { 
-            //     alert("Redirecting to premium subscription page! (Placeholder)"); 
-            //     paymentModal.classList.remove('active'); 
-            // });
-
             // --- Theme Switcher Logic ---
             currentThemeIndex = themeNamesOrder.indexOf(currentRoomMood); 
             if (currentThemeIndex === -1) { 
@@ -912,7 +835,6 @@
 
 
             // Initial calls
-            // checkDailyPostLimit(); // Removed for unlimited chats
             adjustTextareaHeight(); 
             showDailyReflectionModal(); 
         });
