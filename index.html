@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoodChat - Feel. Share. Heal.</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Custom CSS variables for pastel themes */
@@ -97,26 +95,20 @@
 </head>
 <body class="selection:bg-pink-100 selection:text-pink-800">
 
-    <!-- Header for Logo (can be text or image) -->
     <header class="w-full text-center py-4 px-4 sm:px-6">
-        <h1 class="text-4xl font-extrabold text-white text-shadow-md">SoulChat</h1>
-        <!-- Placeholder for a logo image, uncomment and replace src if you have one -->
-        <!-- <img src="https://placehold.co/150x50/FFFFFF/333333?text=SoulChat%20Logo" alt="SoulChat Logo" class="h-12 mx-auto"> -->
-    </header>
+        <h1 class="text-4xl font-extrabold text-white text-shadow-md">MoodChat</h1>
+        </header>
 
     <div class="entry-card">
-        <!-- Hero Banner -->
         <div class="hero-gradient p-6 rounded-t-2xl -mt-10 mx-auto w-full max-w-full -mb-4">
             <h1 class="text-4xl font-bold text-white mb-2 leading-tight">Feel. Share. Heal.</h1>
             <p class="text-white text-opacity-80 text-lg">Your safe space to connect.</p>
         </div>
 
-        <!-- Purpose -->
         <p class="text-gray-600 text-md mt-6 mb-8 px-4">
             Share your thoughts anonymously. Join comforting conversations and find support.
         </p>
 
-        <!-- Entry Card Content -->
         <div class="space-y-6">
             <div>
                 <label for="nickname-input" class="block text-left text-gray-700 text-sm font-medium mb-2">Your anonymous identity:</label>
@@ -151,16 +143,33 @@
             >
                 Enter Room
             </button>
+
+            <div class="mt-8 text-left text-gray-700 px-4">
+                <h3 class="text-xl font-bold mb-3">Welcome to MoodChat!</h3>
+                <p class="mb-4">
+                    MoodChat is a safe and anonymous space designed for you to express your feelings and connect with others who might be experiencing similar emotions.
+                </p>
+                <h4 class="text-lg font-semibold mb-2">How to use it:</h4>
+                <ol class="list-decimal list-inside space-y-2">
+                    <li>
+                        <strong>Your anonymous identity:</strong> A unique nickname is generated for you. This is how you'll be known in the chat room, ensuring your privacy.
+                    </li>
+                    <li>
+                        <strong>I identify as:</strong> Select your gender identity. This helps in connecting you with relevant conversations and fostering a comfortable environment.
+                    </li>
+                    <li>
+                        <strong>How are you feeling today?:</strong> Choose the emoji that best represents your current mood. This helps us direct you to a chat room where others might be feeling similarly, allowing for more empathetic interactions.
+                    </li>
+                    <li>
+                        <strong>Enter Room:</strong> Once you've made your selections, click this button to join the MoodChat community and start sharing your thoughts.
+                    </li>
+                </ol>
+                <p class="mt-4">
+                    Remember, your privacy is our priority. You don't need to log in, and no personal data is stored about you.
+                </p>
+            </div>
         </div>
 
-        <!-- Testimonial bubbles -->
-        <div class="mt-8 text-sm text-gray-500 grid testimonials-grid gap-3 justify-items-center">
-            <div class="testimonial-bubble">"I felt lighter after 5 minutes here." – Anonymous</div>
-            <div class="testimonial-bubble">"Finally a safe space to share." – A Friend</div>
-            <div class="testimonial-bubble">"The UI is so calming and clean." – Happy User</div>
-        </div>
-
-        <!-- Privacy first note -->
         <p class="text-xs text-gray-400 mt-6 px-4">
             You don’t need to log in. No personal data is stored about you.
         </p>
