@@ -3,49 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoodChat - Your Safe Space</title>
+    <title>SoulChat - Your Safe Space</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Inter Font for modern UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Custom CSS variables for a refined, modern pastel theme */
+        /* Custom CSS variables for a refined, modern pastel theme - adapted for purple aesthetic */
         :root {
-            --theme-primary: #8AB6D9; /* Muted Blue-Grey */
-            --theme-secondary: #C8DCEB; /* Lighter Muted Blue */
-            --theme-accent: #FFC0CB; /* Soft Pink (for subtle accents) */
-            --theme-text-dark: #3F424E; /* Deep Charcoal */
+            --theme-primary: #6B46C1; /* Deep Purple */
+            --theme-secondary: #9F7AEA; /* Lighter Purple */
+            --theme-accent: #FED7AA; /* Soft Peach (for subtle accents like floating hearts) */
+            --theme-text-dark: #333333; /* Dark Charcoal */
             --theme-text-light: #ffffff;
-            --theme-bg-soft: #F9FAFB; /* Off-white for container */
-            --theme-bubble-other: #ECEFF1; /* Light Grey-Blue for received bubbles */
-            --theme-bubble-my: #D4E6F1; /* Soft Blue for sent bubbles */
-            --theme-input-bg: #ffffff;
-            --theme-border-color: #E0E0E0; /* Light, subtle border */
+            --theme-bg-soft: #ffffff; /* White for header and modal */
+            --theme-bubble-other: #ffffff; /* White for received bubbles */
+            --theme-bubble-my: #6B46C1; /* Deep Purple for sent bubbles */
+            --theme-input-bg: #EAE3F7; /* Very light purple for input background */
+            --theme-border-color: #D1C4E9; /* Light purple for subtle borders */
+            --chat-bg-gradient-start: #6B46C1; /* Gradient start for chat background */
+            --chat-bg-gradient-end: #805AD5; /* Gradient end for chat background */
         }
 
-        /* Mood-specific themes for a more mature aesthetic */
+        /* Mood-specific themes for a more mature aesthetic - adjusting colors to fit the new base UI */
         body.theme-Comfort {
-            --theme-primary: #B2D8D8; /* Soft Teal-Blue */
-            --theme-secondary: #D9EEEE; /* Very Light Teal */
-            --theme-accent: #FFDAB9; /* Peach (subtle warmth) */
-            --theme-text-dark: #4A6060; /* Dark Teal Text */
-            --theme-bubble-my: #E0F2F1; /* Lighter Teal for my bubbles */
-            --theme-bubble-other: #F2F8F8; /* Even Lighter for received */
+            --theme-primary: #5A67D8; /* Soft Blue-Violet */
+            --theme-secondary: #8DA1F4; /* Lighter Blue-Violet */
+            --theme-accent: #90CDF4; /* Light Blue */
+            --theme-text-dark: #3A4685; /* Dark Blue Text */
+            --theme-bubble-my: #5A67D8; /* Blue-Violet for my bubbles */
+            --theme-bubble-other: #ffffff; /* White for received */
+            --theme-input-bg: #DCE3F9; /* Lighter blue for input */
+            --theme-border-color: #BCC7ED;
+            --chat-bg-gradient-start: #5A67D8;
+            --chat-bg-gradient-end: #6C7DD6;
         }
         body.theme-Joy {
-            --theme-primary: #FFD966; /* Muted Golden Yellow */
-            --theme-secondary: #FFF2B2; /* Very Light Yellow */
-            --theme-accent: #FFAB66; /* Soft Orange */
-            --theme-text-dark: #6B571A; /* Dark Gold Text */
-            --theme-bubble-my: #FFF5CC; /* Lighter Golden Yellow for my bubbles */
-            --theme-bubble-other: #FFFBE6; /* Even Lighter for received */
+            --theme-primary: #D69E2E; /* Goldenrod */
+            --theme-secondary: #F6AD55; /* Lighter Orange */
+            --theme-accent: #FBD38D; /* Light Orange */
+            --theme-text-dark: #7A5B1C; /* Dark Gold Text */
+            --theme-bubble-my: #D69E2E; /* Goldenrod for my bubbles */
+            --theme-bubble-other: #ffffff; /* White for received */
+            --theme-input-bg: #FCF4E1; /* Lighter yellow for input */
+            --theme-border-color: #EEDFA3;
+            --chat-bg-gradient-start: #D69E2E;
+            --chat-bg-gradient-end: #EBA948;
         }
         body.theme-Sadness {
-            --theme-primary: #8E9B9C; /* Deep Desaturated Blue-Grey */
-            --theme-secondary: #D6DCE0; /* Lighter Desaturated Blue-Grey */
-            --theme-accent: #9BB0B8; /* Muted Grey-Blue Accent */
-            --theme-text-dark: #3A474D; /* Dark Slate Text */
-            --theme-bubble-my: #E4E7E9; /* Lighter Grey-Blue for my bubbles */
-            --theme-bubble-other: #F0F2F4; /* Even Lighter for received */
+            --theme-primary: #A0AEC0; /* Slate Grey */
+            --theme-secondary: #CBD5E0; /* Lighter Grey */
+            --theme-accent: #EDF2F7; /* Very Light Grey */
+            --theme-text-dark: #4A5568; /* Dark Slate Text */
+            --theme-bubble-my: #A0AEC0; /* Slate Grey for my bubbles */
+            --theme-bubble-other: #ffffff; /* White for received */
+            --theme-input-bg: #E2E8F0; /* Lighter grey for input */
+            --theme-border-color: #C1CCD8;
+            --chat-bg-gradient-start: #A0AEC0;
+            --chat-bg-gradient-end: #ADBBCA;
         }
 
         /* Essential for full height and consistent mobile layout */
@@ -57,143 +74,197 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--theme-primary);
+            font-family: 'Inter', sans-serif;
+            background-color: #d1c4e9; /* Light purple background for the whole page */
             display: flex;
-            flex-direction: column;
-            height: 100%;
-            color: var(--theme-text-dark);
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
             transition: background 0.5s ease-in-out;
         }
 
-        /* Main chat container */
-        .chat-container {
+        /* Main chat container matching the phone UI look */
+        .phone-mockup-container {
+            position: relative;
+            width: 100%;
+            max-width: 420px; /* Max width for a typical phone */
+            height: calc(100vh - 2rem); /* Almost full height on desktop, with some margin */
+            max-height: 800px; /* Max height for desktop */
+            margin: 1rem auto; /* Center with margin */
+            border-radius: 3rem; /* Highly rounded corners */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Stronger shadow */
+            overflow: hidden;
+            background-color: var(--chat-bg-gradient-start); /* Fallback background */
+            display: flex;
+            flex-direction: column;
+            border: 8px solid white; /* White border to simulate phone bezel */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        /* Inner content area of the phone */
+        .chat-content-area {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            max-width: 768px;
-            width: 95%; /* Slightly less than 100% for subtle spacing */
-            margin: 0 auto;
-            background-color: var(--theme-bg-soft);
-            border-radius: 1.5rem;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* More prominent, refined shadow */
-            position: relative;
-            z-index: 10;
-            height: 98%; /* Occupy most of the height with some top/bottom space */
-            margin-top: 1%; /* Center vertically with 1% top and 1% bottom margin */
-            margin-bottom: 1%;
-            overflow: hidden; /* Ensure rounded corners clip content */
+            background: linear-gradient(to bottom right, var(--chat-bg-gradient-start), var(--chat-bg-gradient-end));
+            border-radius: 2.5rem; /* Slightly less rounded than outer container */
+            overflow: hidden;
         }
 
         /* Top Bar */
         .top-bar {
-            background-color: var(--theme-bg-soft); /* Ensure top bar matches container background */
-            border-bottom: 1px solid var(--theme-border-color); /* Subtle separator */
+            background-color: var(--theme-bg-soft); /* White background */
+            padding: 1rem 1.25rem;
+            border-top-left-radius: 2.5rem; /* Rounded top corners */
+            border-top-right-radius: 2.5rem;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Soft shadow for separation */
         }
+
         .top-bar .text-gray-800 {
-            color: var(--theme-text-dark); /* Ensure text color matches theme */
+            color: var(--theme-text-dark);
         }
         .top-bar .text-gray-500,
         .top-bar .text-gray-600 {
-            color: #6b7280; /* Keep subtle gray for secondary info */
+            color: #6b7280;
         }
         .top-bar button {
-            background-color: var(--theme-secondary); /* Use secondary color for buttons */
+            background-color: var(--theme-secondary);
             color: var(--theme-text-dark);
             transition: background-color 0.2s ease;
         }
         .top-bar button:hover {
-            background-color: color-mix(in srgb, var(--theme-secondary) 80%, black 20%); /* Slightly darker on hover */
+            background-color: color-mix(in srgb, var(--theme-secondary) 80%, black 20%);
         }
 
         /* Chat messages area */
         .chat-messages {
             flex-grow: 1;
-            padding: 1.25rem; /* Increased padding */
+            padding: 1.5rem; /* Increased padding */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             display: flex;
             flex-direction: column;
-            gap: 0.85rem; /* Slightly more space between bubbles */
+            gap: 0.75rem; /* Space between bubbles */
             scroll-behavior: smooth;
             min-height: 0;
         }
 
+        /* Custom scrollbar for the chat messages area */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
         /* Message bubble base */
         .message-bubble {
-            max-width: 85%; /* Slightly wider bubbles */
-            padding: 0.85rem 1.4rem; /* Increased padding */
-            border-radius: 1.6rem; /* More rounded */
+            max-width: 85%;
+            padding: 0.75rem 1.25rem;
+            border-radius: 1.5rem; /* More rounded */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer, more pronounced shadow */
-            line-height: 1.5; /* Better readability */
+            line-height: 1.4;
             position: relative;
             transition: transform 0.2s ease-out, opacity 0.2s ease-out;
-            animation: fadeIn 0.3s ease-out;
-            word-wrap: break-word; /* Ensure long words wrap */
+            animation: fadeIn 0.3s ease-out forwards; /* Keep forwards to ensure final state */
+            word-wrap: break-word;
         }
 
         /* Fade-in animation for messages */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); } /* Start lower */
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .message-bubble.sent {
-            background-color: var(--theme-bubble-my);
+            background-color: var(--theme-bubble-my); /* Deep Purple */
+            color: var(--theme-text-light); /* White text */
             align-self: flex-end;
             border-bottom-right-radius: 0.6rem; /* Pointy end */
+            border-top-right-radius: 1.5rem; /* Consistent curve */
+            border-top-left-radius: 1.5rem;
+            border-bottom-left-radius: 1.5rem;
         }
 
         .message-bubble.received {
-            background-color: var(--theme-bubble-other);
+            background-color: var(--theme-bubble-other); /* White */
+            color: var(--theme-text-dark); /* Dark text */
             align-self: flex-start;
             border-bottom-left-radius: 0.6rem; /* Pointy end */
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+            border-bottom-right-radius: 1.5rem;
         }
 
         .message-bubble .sender-info {
-            font-size: 0.7rem; /* Slightly smaller font for sender info */
-            color: #777; /* Neutral gray for sender info */
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.7); /* Lighter color for sender info on dark bubbles */
             opacity: 0.9;
             margin-bottom: 0.3rem;
-            font-weight: 500; /* Medium weight */
+            font-weight: 500;
+        }
+        .message-bubble.received .sender-info {
+            color: #777; /* Darker color for sender info on light bubbles */
         }
         .message-bubble p {
-            color: var(--theme-text-dark); /* Ensure message text uses dark theme color */
+            color: inherit; /* Inherit color from parent bubble */
         }
 
         /* Reply specific styling */
         .message-bubble .reply-preview {
-            background-color: rgba(0, 0, 0, 0.05);
-            border-left: 3px solid var(--theme-primary);
+            background-color: rgba(0, 0, 0, 0.05); /* Light grey for the quoted part */
+            border-left: 3px solid var(--theme-accent); /* Accent color border */
             padding: 0.5rem 0.75rem;
             border-radius: 0.5rem;
             margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+        .message-bubble.received .reply-preview {
+            background-color: rgba(200, 200, 200, 0.2); /* Slightly different for received */
         }
         .message-bubble .reply-preview .reply-sender {
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            color: inherit; /* Inherit from bubble */
+            opacity: 0.9;
+        }
+        .message-bubble.received .reply-preview .reply-sender {
             color: var(--theme-text-dark);
-            opacity: 0.8;
         }
         .message-bubble .reply-preview .reply-text {
-            font-size: 0.8rem;
-            color: #555;
+            font-size: 0.75rem;
+            color: inherit;
+            opacity: 0.8;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .message-bubble.received .reply-preview .reply-text {
+            color: #555;
+        }
+
 
         /* Message input area */
         .message-input-area {
-            padding: 1rem 1.25rem; /* Match chat padding */
-            background-color: var(--theme-input-bg);
-            border-top: 1px solid var(--theme-border-color); /* Subtle border */
-            border-bottom-left-radius: 1.5rem;
-            border-bottom-right-radius: 1.5rem;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(to bottom right, var(--chat-bg-gradient-start), var(--chat-bg-gradient-end)); /* Match chat area gradient */
+            border-bottom-left-radius: 2.5rem;
+            border-bottom-right-radius: 2.5rem;
+            position: relative;
+            z-index: 10;
         }
 
         .reply-input-preview {
-            background-color: var(--theme-bubble-other);
+            background-color: var(--theme-input-bg); /* Use a softer background */
             border-radius: 0.75rem;
             padding: 0.75rem 1rem;
             margin-bottom: 0.75rem;
@@ -236,70 +307,65 @@
         .message-input {
             border-radius: 2rem;
             padding: 0.75rem 1.25rem;
-            background-color: var(--theme-bubble-other); /* Use a soft background for input */
-            border: 1px solid transparent; /* No visible border unless focused */
+            background-color: var(--theme-input-bg);
+            border: 1px solid transparent;
             color: var(--theme-text-dark);
             resize: none;
             height: auto;
-            min-height: 2.75rem; /* Slightly taller min-height */
-            max-height: 9rem; /* Increased max height */
-            overflow-y: auto; /* Allow scrolling for long messages */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Inner shadow for depth */
+            min-height: 2.75rem;
+            max-height: 9rem;
+            overflow-y: auto;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none; /* Remove default focus outline */
         }
         .message-input:focus {
-            outline: none;
-            border-color: var(--theme-primary); /* Highlight border on focus */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 3px color-mix(in srgb, var(--theme-primary) 50%, transparent); /* Subtle focus ring */
+            border-color: var(--theme-primary);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 3px color-mix(in srgb, var(--theme-primary) 50%, transparent);
         }
-        /* --- START: Added CSS to hide scrollbar arrows --- */
-        /* Hide scrollbar for Chrome, Safari and Opera */
+        /* Hide scrollbar arrows */
         .message-input::-webkit-scrollbar {
             display: none;
         }
-
-        /* Hide scrollbar for IE, Edge and Firefox */
         .message-input {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        /* --- END: Added CSS to hide scrollbar arrows --- */
-
 
         .send-button {
             background-color: var(--theme-primary);
             transition: background-color 0.3s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
-            color: var(--theme-text-light); /* White icon */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            color: var(--theme-text-light);
         }
 
         .send-button:hover {
-            background-color: color-mix(in srgb, var(--theme-primary) 80%, black 20%); /* Darken on hover */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Slightly larger shadow on hover */
+            background-color: color-mix(in srgb, var(--theme-primary) 80%, black 20%);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
         }
 
         .send-button:active {
-            transform: scale(0.92); /* Slightly more pronounced active state */
+            transform: scale(0.92);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         /* Floating heart animation on send */
         .floating-heart-send {
             position: absolute;
-            font-size: 2.2rem; /* Slightly larger heart */
+            font-size: 2.2rem;
             color: var(--theme-accent);
             opacity: 0;
-            animation: float-send 1.2s ease-out forwards; /* Longer animation */
+            animation: float-send 1.2s ease-out forwards;
             pointer-events: none;
             z-index: 50;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); /* Soft glow */
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
 
         @keyframes float-send {
-            0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0.9; } /* More visible initially */
+            0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0.9; }
             30% { transform: translateY(-40px) translateX(15px) scale(0.8); opacity: 0.7; }
             70% { transform: translateY(-90px) translateX(25px) scale(1.2); opacity: 0.3; }
-            100% { transform: translateY(-130px) translateX(30px) scale(1.6); opacity: 0; } /* Float higher, fade out more */
+            100% { transform: translateY(-130px) translateX(30px) scale(1.6); opacity: 0; }
         }
 
         /* Daily reflection modal */
@@ -309,14 +375,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+            background-color: rgba(0, 0, 0, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 100;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.4s ease-out, visibility 0.4s ease-out; /* Slower transition */
+            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
         }
 
         .modal-overlay.active {
@@ -326,32 +392,32 @@
 
         .modal-content {
             background-color: white;
-            padding: 2.5rem; /* Increased padding */
-            border-radius: 1.8rem; /* More rounded */
-            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25); /* Stronger shadow */
+            padding: 2.5rem;
+            border-radius: 1.8rem;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
             max-width: 90%;
-            width: 450px; /* Slightly wider modal */
+            width: 450px;
             text-align: center;
-            transform: translateY(-30px); /* Start further up */
-            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); /* Bouncier transition */
-            opacity: 0; /* Start invisible */
+            transform: translateY(-30px);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            opacity: 0;
         }
         .modal-overlay.active .modal-content {
             transform: translateY(0);
-            opacity: 1; /* Fade in */
+            opacity: 1;
         }
         
         .modal-content h3 {
             color: var(--theme-text-dark);
-            font-weight: 700; /* Bold title */
+            font-weight: 700;
         }
         .modal-content p {
-            color: #555; /* Slightly softer text for description */
+            color: #555;
         }
         .modal-content button {
-            padding: 0.9rem 1.8rem; /* Larger buttons */
-            border-radius: 2rem; /* More rounded buttons */
-            font-weight: 600; /* Semibold text */
+            padding: 0.9rem 1.8rem;
+            border-radius: 2rem;
+            font-weight: 600;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: background-color 0.2s ease, box-shadow 0.2s ease;
         }
@@ -366,59 +432,58 @@
         /* Typing indicator styling */
         .typing-indicator {
             font-style: italic;
-            color: #7c7c7c; /* Slightly darker gray for better visibility */
-            padding-left: 1.25rem; /* Match chat padding */
-            height: 1.8rem; /* More space for indicator */
-            line-height: 1.8rem; /* Center text vertically */
+            color: rgba(255, 255, 255, 0.7); /* Lighter color to stand out on dark background */
+            padding-left: 1.5rem; /* Match chat padding */
+            height: 1.8rem;
+            line-height: 1.8rem;
             overflow: hidden;
             transition: opacity 0.3s ease-in-out;
             opacity: 0;
-            font-size: 0.9rem; /* Slightly larger font */
+            font-size: 0.9rem;
         }
         .typing-indicator.active {
             opacity: 1;
         }
         
-        /* Post limit display */
-        #post-limit-display {
-            color: #777; /* Softer color for info text */
-            font-size: 0.85rem;
-        }
+        /* Post limit display - removed for this UI */
         .flex-grow.border-b {
-            border-color: var(--theme-border-color); /* Match theme border color */
+            border-color: var(--theme-border-color);
         }
-
 
         /* Mobile specific adjustments */
         @media (max-width: 767px) {
-            .chat-container {
-                border-radius: 0;
-                box-shadow: none;
-                width: 100%; /* Full width on small screens */
-                height: 100%;
-                margin: 0;
+            .phone-mockup-container {
+                border-radius: 3rem; /* Apply the rounded border on mobile */
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Keep shadow on mobile */
+                width: 95%; /* Adjust width to leave some space on sides */
+                height: calc(100vh - 2rem); /* Keep height calculation */
+                margin: 1rem auto; /* Center with margin */
+                border: 8px solid white; /* Keep white border on mobile */
             }
             body {
                 padding: 0;
             }
             .top-bar {
-                padding: 1rem 1.25rem; /* Adjust padding for smaller screens */
-                border-radius: 0; /* No top radius on mobile */
+                padding: 1rem 1.25rem;
+                border-radius: 2.5rem; /* Match inner radius for consistency */
+            }
+            .chat-content-area {
+                border-radius: 2.5rem; /* Match inner radius for consistency */
             }
             .message-input-area {
-                border-radius: 0; /* No bottom radius on mobile */
+                border-bottom-left-radius: 2.5rem; /* Keep rounded bottom for mobile */
+                border-bottom-right-radius: 2.5rem;
             }
             .message-bubble {
-                max-width: 90%; /* Allow bubbles to be wider on smaller screens */
+                max-width: 90%;
             }
             .modal-content {
-                padding: 1.5rem; /* Smaller padding for modals on mobile */
+                padding: 1.5rem;
             }
         }
-
     </style>
 </head>
-<body>
+<body class="selection:bg-purple-300">
 
     <div id="daily-reflection-modal" class="modal-overlay">
         <div class="modal-content">
@@ -428,59 +493,77 @@
         </div>
     </div>
 
-    <div class="chat-container">
-        <div class="top-bar bg-white p-4 rounded-t-xl shadow-sm flex items-center justify-between z-10">
-            <div class="flex items-center gap-2">
-                <span id="room-icon" class="text-3xl"></span> <h2 id="room-name" class="text-xl font-semibold text-gray-800"></h2>
-            </div>
-            <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-500 hidden sm:block"><span id="active-users">0</span> people here</span>
-                <button id="theme-switcher-button" class="p-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition-colors" title="Switch Theme">
-                    <i class="fas fa-palette"></i>
-                </button>
-                <a href="index.html" class="text-gray-600 hover:text-gray-800 transition-colors" title="Go Home">
-                    <i class="fas fa-home text-xl"></i>
-                </a>
-            </div>
-        </div>
+    <!-- Phone mockup container -->
+    <div class="phone-mockup-container">
+        <!-- Inner chat content area -->
+        <div class="chat-content-area">
 
-        <div id="chat-messages" class="chat-messages">
-            <div class="message-bubble received">
-                <div class="sender-info">🫂 GentleSoul42</div>
-                Hello everyone, feeling a bit overwhelmed today. Anyone else?
-            </div>
-            <div class="message-bubble sent">
-                <div class="sender-info">♀️ WiseRiver99</div>
-                <p>You're not alone. It's okay to feel that way. Sending you warmth!</p>
-            </div>
-             <div class="message-bubble received">
-                <div class="sender-info">♂️ BraveCloud10</div>
-                <p>Same here. This space really helps.</p>
-            </div>
-        </div>
-
-        <div id="typing-indicator" class="typing-indicator pl-4 text-sm text-gray-500 italic"></div>
-
-        <div class="message-input-area" id="message-input-area">
-            <div id="reply-input-preview" class="reply-input-preview hidden">
-                <div class="reply-text-content">
-                    <div class="reply-sender"></div>
-                    <div class="reply-message-text"></div>
+            <!-- Header -->
+            <div class="top-bar flex items-center justify-between">
+                <!-- Back Button - REMOVED -->
+                
+                <!-- Profile Info -->
+                <div class="flex items-center flex-grow">
+                    <img src="https://placehold.co/40x40/9F7AEA/ffffff?text=LM" alt="Profile" class="w-10 h-10 rounded-full mr-3 border-2 border-purple-300">
+                    <div>
+                        <h2 id="room-name" class="text-md font-semibold text-gray-800"></h2>
+                        <p class="text-sm text-green-500 font-medium">Online</p> <!-- Always online in this UI -->
+                    </div>
                 </div>
-                <button id="cancel-reply-btn" class="cancel-reply-btn">
-                    <i class="fas fa-times-circle"></i>
-                </button>
+
+                <!-- Right-side icons -->
+                <div class="flex items-center gap-4">
+                    <!-- Theme Switcher Button -->
+                    <button id="theme-switcher-button" class="p-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition-colors" title="Switch Theme">
+                        <i class="fas fa-palette"></i>
+                    </button>
+                    <!-- Home Button -->
+                    <a href="index.html" class="text-gray-600 hover:text-gray-800 transition-colors" title="Go Home">
+                        <i class="fas fa-home text-xl"></i>
+                    </a>
+                </div>
             </div>
-            <div class="flex gap-2">
-                <textarea
-                    id="message-input"
-                    placeholder="Share your thoughts..."
-                    class="message-input flex-grow"
-                    rows="1"
-                ></textarea>
-                <button id="send-button" class="send-button w-12 h-12 rounded-full flex items-center justify-center text-white text-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+
+            <!-- Chat Messages Area -->
+            <div id="chat-messages" class="chat-messages">
+                <!-- Sample messages will be populated by JS -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div id="typing-indicator" class="typing-indicator"></div>
+
+            <!-- Message Input Area -->
+            <div class="message-input-area" id="message-input-area">
+                <!-- Reply preview (hidden by default) -->
+                <div id="reply-input-preview" class="reply-input-preview hidden">
+                    <div class="reply-text-content">
+                        <div class="reply-sender"></div>
+                        <div class="reply-message-text"></div>
+                    </div>
+                    <button id="cancel-reply-btn" class="cancel-reply-btn">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
+                
+                <div class="flex gap-2">
+                    <!-- Attachment icon button -->
+                    <button class="flex-shrink-0 p-3 rounded-full bg-white hover:bg-gray-100 transition duration-200 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                        </svg>
+                    </button>
+                    <!-- Message Textarea -->
+                    <textarea
+                        id="message-input"
+                        placeholder="Share your thoughts..."
+                        class="message-input flex-grow"
+                        rows="1"
+                    ></textarea>
+                    <!-- Send Button -->
+                    <button id="send-button" class="send-button w-12 h-12 rounded-full flex items-center justify-center text-white text-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -493,38 +576,39 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
 
         // --- GLOBAL DECLARATIONS FOR THEME LOGIC ---
-        const themeNamesOrder = ["Comfort", "Joy", "Sadness"]; 
-        const visualThemes = { 
-            "Comfort": { class: "theme-Comfort" }, 
-            "Joy": { class: "theme-Joy" }, 
-            "Sadness": { class: "theme-Sadness" } 
+        const themeNamesOrder = ["Comfort", "Joy", "Sadness"];
+        const visualThemes = {
+            "Comfort": { class: "theme-Comfort" },
+            "Joy": { class: "theme-Joy" },
+            "Sadness": { class: "theme-Sadness" }
         };
-        let currentThemeIndex; 
+        let currentThemeIndex;
         let currentThemeName;
 
         // --- GLOBAL DECLARATIONS for Typing Indicator ---
-        let typingTimeout; 
-        const TYPING_TIMEOUT_MS = 3000; 
-        const MESSAGE_LIFESPAN_HOURS = 6; 
+        let typingTimeout;
+        const TYPING_TIMEOUT_MS = 3000;
+        const MESSAGE_LIFESPAN_HOURS = 6;
 
         // --- Reply State ---
         let replyingToMessage = null; // Stores { docId, nickname, text } of the message being replied to
 
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const roomNameElement = document.getElementById('room-name'); 
-            const roomIconElement = document.getElementById('room-icon'); 
-            const chatMessages = document.getElementById('chat-messages'); 
-            const messageInput = document.getElementById('message-input'); 
-            const sendButton = document.getElementById('send-button'); 
-            const typingIndicatorElement = document.getElementById('typing-indicator'); 
-            const messageInputArea = document.getElementById('message-input-area'); // New: Get the input area itself
+            // Updated element IDs to match new UI structure where necessary
+            const roomNameElement = document.getElementById('room-name');
+            // const roomIconElement = document.getElementById('room-icon'); // Icon is now part of the profile image in the new UI concept
+            const chatMessages = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const typingIndicatorElement = document.getElementById('typing-indicator');
+            const messageInputArea = document.getElementById('message-input-area');
             
-            const dailyReflectionModal = document.getElementById('daily-reflection-modal'); 
-            const closeReflectionModalButton = document.getElementById('close-reflection-modal-button'); 
+            const dailyReflectionModal = document.getElementById('daily-reflection-modal');
+            const closeReflectionModalButton = document.getElementById('close-reflection-modal-button');
             
-            const themeSwitcherButton = document.getElementById('theme-switcher-button'); 
-            const activeUsersElement = document.getElementById('active-users'); 
+            const themeSwitcherButton = document.getElementById('theme-switcher-button');
+            // const activeUsersElement = document.getElementById('active-users'); // Not explicitly shown in the new UI, but logic can remain if needed
 
             // Reply UI elements
             const replyInputPreview = document.getElementById('reply-input-preview');
@@ -533,9 +617,9 @@
             const cancelReplyBtn = document.getElementById('cancel-reply-btn');
 
 
-            let currentNickname = ''; 
-            let currentRoomMood = ''; 
-            let currentGenderSymbol = ''; 
+            let currentNickname = '';
+            let currentRoomMood = '';
+            let currentGenderSymbol = '';
 
             let db; // Firestore instance
             let auth; // Auth instance
@@ -544,97 +628,98 @@
 
             // --- Firebase Initialization ---
             const firebaseConfig = {
-              apiKey: "AIzaSyAIerQSDRGPsULxT-24e1kJnPN3bOD5lFo", 
-              authDomain: "soulchat-app.firebaseapp.com", 
-              projectId: "soulchat-app", 
-              storageBucket: "soulchat-app.firebasestorage.app", 
-              messagingSenderId: "595441139618", 
-              appId: "1:595441139618:web:56eb81bb3d6bde776c3cfb", 
-              measurementId: "G-61G3ZDNXJZ" 
+              apiKey: "AIzaSyAIerQSDRGPsULxT-24e1kJnPN3bOD5lFo",
+              authDomain: "soulchat-app.firebaseapp.com",
+              projectId: "soulchat-app",
+              storageBucket: "soulchat-app.firebasestorage.app",
+              messagingSenderId: "595441139618",
+              appId: "1:595441139618:web:56eb81bb3d6bde776c3cfb",
+              measurementId: "G-61G3ZDNXJZ"
             };
 
-            const initialAuthToken = null; 
+            const initialAuthToken = null; // Assuming this is handled by Canvas environment
 
             try {
-                const app = initializeApp(firebaseConfig); 
-                db = getFirestore(app); 
-                auth = getAuth(app); 
-                analytics = getAnalytics(app); 
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                analytics = getAnalytics(app);
 
-                if (initialAuthToken) { 
-                    await signInWithCustomToken(auth, initialAuthToken); 
+                if (typeof __initial_auth_token !== 'undefined') { // Use Canvas provided token
+                    await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
-                    await signInAnonymously(auth); 
+                    await signInAnonymously(auth);
                 }
 
-                onAuthStateChanged(auth, (user) => { 
-                    if (user) { 
-                        userId = user.uid; 
-                        console.log("Firebase Authenticated! User ID:", userId); 
-                        setupRealtimeChat(); 
-                        setupTypingIndicatorListener(); 
-                        cleanOldMessages(); 
-                        setInterval(cleanOldMessages, 30 * 60 * 1000); 
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase Authenticated! User ID:", userId);
+                        setupRealtimeChat();
+                        setupTypingIndicatorListener();
+                        cleanOldMessages();
+                        setInterval(cleanOldMessages, 30 * 60 * 1000);
                     } else {
-                        console.warn("No user signed in. Real-time chat features may be limited."); 
+                        console.warn("No user signed in. Real-time chat features may be limited.");
                     }
                 });
 
             } catch (error) {
-                console.error("Error initializing Firebase or authenticating:", error); 
-                chatMessages.innerHTML = `<div class="text-center text-red-500 mt-8">Failed to load chat. Please try again later. (Check console for details).</div>`; 
-                messageInput.disabled = true; 
-                sendButton.disabled = true; 
+                console.error("Error initializing Firebase or authenticating:", error);
+                chatMessages.innerHTML = `<div class="text-center text-red-500 mt-8">Failed to load chat. Please try again later. (Check console for details).</div>`;
+                messageInput.disabled = true;
+                sendButton.disabled = true;
             }
 
 
             // --- URL Parameter Parsing ---
-            const urlParams = new URLSearchParams(window.location.search); 
-            currentNickname = urlParams.get('nickname') || 'AnonymousSoul'; 
-            currentRoomMood = urlParams.get('mood') || 'Comfort'; 
-            currentGenderSymbol = urlParams.get('genderSymbol') || ''; 
+            const urlParams = new URLSearchParams(window.location.search);
+            currentNickname = urlParams.get('nickname') || 'AnonymousSoul';
+            currentRoomMood = urlParams.get('mood') || 'Comfort';
+            currentGenderSymbol = urlParams.get('genderSymbol') || '';
 
             // --- Moods for Room (Fixed once entered) ---
             const roomMoods = {
-                "Comfort": { icon: "🫂" }, 
-                "Joy": { icon: "😊" }, 
-                "Sadness": { icon: "😔" } 
+                "Comfort": { icon: "🫂" },
+                "Joy": { icon: "😊" },
+                "Sadness": { icon: "😔" }
             };
 
-            currentThemeIndex = themeNamesOrder.indexOf(currentRoomMood); 
-            if (currentThemeIndex === -1) { 
-                currentThemeIndex = 0; 
+            currentThemeIndex = themeNamesOrder.indexOf(currentRoomMood);
+            if (currentThemeIndex === -1) {
+                currentThemeIndex = 0;
             }
-            currentThemeName = themeNamesOrder[currentThemeIndex]; 
+            currentThemeName = themeNamesOrder[currentThemeIndex];
 
-            const initialRoomInfo = roomMoods[currentRoomMood]; 
-            roomNameElement.textContent = currentRoomMood + " Room"; 
-            roomIconElement.textContent = initialRoomInfo.icon; 
+            // Set the room name in the header
+            roomNameElement.textContent = currentRoomMood + " Room";
+            // roomIconElement.textContent = roomMoods[currentRoomMood].icon; // Removed as per UI design
 
-            document.body.classList.add(visualThemes[currentThemeName].class); 
+            // Apply initial theme class to body
+            document.body.classList.add(visualThemes[currentThemeName].class);
 
-            activeUsersElement.textContent = '...'; 
+            // activeUsersElement.textContent = '...'; // Removed as per UI design
 
             // --- Message Sending Functionality ---
             async function sendMessage() {
-                const messageText = messageInput.value.trim(); 
-                if (messageText === '') return; 
+                const messageText = messageInput.value.trim();
+                if (messageText === '') return;
 
-                if (!userId) { 
-                    console.error("User not authenticated, cannot send message."); 
-                    return; 
+                if (!userId) {
+                    console.error("User not authenticated, cannot send message.");
+                    return;
                 }
 
                 try {
-                    const localMessageId = 'local-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9); 
+                    const localMessageId = 'local-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
 
                     const messageData = {
-                        userId: userId, 
-                        nickname: currentNickname, 
-                        genderSymbol: currentGenderSymbol, 
-                        text: messageText, 
-                        timestamp: new Date(), 
-                        localId: localMessageId 
+                        userId: userId,
+                        nickname: currentNickname,
+                        genderSymbol: currentGenderSymbol,
+                        text: messageText,
+                        timestamp: new Date(),
+                        localId: localMessageId
                     };
 
                     // Add reply information if in reply mode
@@ -648,95 +733,96 @@
                     }
 
                     // Optimistically display message
-                    displayMessage(messageData, localMessageId, true); 
+                    displayMessage(messageData, localMessageId, true);
 
-                    messageInput.value = ''; 
-                    adjustTextareaHeight(); 
+                    messageInput.value = '';
+                    adjustTextareaHeight();
                     
-                    setTypingStatus(false); 
+                    setTypingStatus(false);
 
                     // Add message to Firestore
                     await addDoc(collection(db, `chat_rooms/${currentRoomMood}/messages`), {
                         ...messageData,
-                        timestamp: serverTimestamp() 
+                        timestamp: serverTimestamp()
                     });
 
                 } catch (e) {
-                    console.error("Error adding document: ", e); 
+                    console.error("Error adding document: ", e);
                 }
             }
 
             // --- Real-time Chat Setup (Firestore Listener) ---
             function setupRealtimeChat() {
-                chatMessages.innerHTML = ''; 
+                chatMessages.innerHTML = '';
 
-                const q = query(collection(db, `chat_rooms/${currentRoomMood}/messages`), orderBy("timestamp")); 
+                const q = query(collection(db, `chat_rooms/${currentRoomMood}/messages`), orderBy("timestamp"));
                 
-                onSnapshot(q, (snapshot) => { 
-                    snapshot.docChanges().forEach((change) => { 
-                        const message = change.doc.data(); 
-                        const docId = change.doc.id; 
+                onSnapshot(q, (snapshot) => {
+                    snapshot.docChanges().forEach((change) => {
+                        const message = change.doc.data();
+                        const docId = change.doc.id;
 
-                        if (change.type === "added") { 
-                            if (message.userId === userId && message.localId) { 
-                                const optimisticElement = document.querySelector(`.message-bubble[data-local-id="${message.localId}"]`); 
-                                if (optimisticElement) { 
-                                    optimisticElement.remove(); 
-                                    console.log("Removed optimistic message, now displaying real:", docId); 
+                        if (change.type === "added") {
+                            if (message.userId === userId && message.localId) {
+                                const optimisticElement = document.querySelector(`.message-bubble[data-local-id="${message.localId}"]`);
+                                if (optimisticElement) {
+                                    optimisticElement.remove();
+                                    console.log("Removed optimistic message, now displaying real:", docId);
                                 }
                             }
-                            console.log("Displaying message from Firestore:", docId, message); 
-                            displayMessage(message, docId); 
-                        } else if (change.type === "modified") { 
-                            console.log("Modified message:", message); 
-                            const existingMessageElement = document.querySelector(`.message-bubble[data-doc-id="${docId}"]`); 
-                            if (existingMessageElement) { 
-                                existingMessageElement.querySelector('p').textContent = message.text; 
+                            console.log("Displaying message from Firestore:", docId, message);
+                            displayMessage(message, docId);
+                        } else if (change.type === "modified") {
+                            console.log("Modified message:", message);
+                            const existingMessageElement = document.querySelector(`.message-bubble[data-doc-id="${docId}"]`);
+                            if (existingMessageElement) {
+                                existingMessageElement.querySelector('p').textContent = message.text;
+                                // Re-render reply content if needed, though usually text content is sufficient
                             }
-                        } else if (change.type === "removed") { 
-                            console.log("Removed message:", message); 
-                            const existingMessageElement = document.querySelector(`.message-bubble[data-doc-id="${docId}"]`); 
-                            if (existingMessageElement) { 
-                                existingMessageElement.remove(); 
+                        } else if (change.type === "removed") {
+                            console.log("Removed message:", message);
+                            const existingMessageElement = document.querySelector(`.message-bubble[data-doc-id="${docId}"]`);
+                            if (existingMessageElement) {
+                                existingMessageElement.remove();
                             }
                         }
                     });
-                    scrollToBottom(); 
+                    scrollToBottom();
                 }, (error) => {
-                    console.error("Error listening to messages:", error); 
-                    chatMessages.innerHTML = `<div class="text-center text-red-500 mt-8">Error loading messages. Check your Firebase rules and connection.</div>`; 
+                    console.error("Error listening to messages:", error);
+                    chatMessages.innerHTML = `<div class="text-center text-red-500 mt-8">Error loading messages. Check your Firebase rules and connection.</div>`;
                 });
             }
 
             // --- Display Message Function (Modified for consistency and optimistic flag) ---
             function displayMessage(message, id, isOptimistic = false) {
-                if (document.querySelector(`.message-bubble[data-doc-id="${id}"]`) && !isOptimistic) { 
-                    console.log("Skipping display of duplicate real message:", id); 
-                    return; 
+                if (document.querySelector(`.message-bubble[data-doc-id="${id}"]`) && !isOptimistic) {
+                    console.log("Skipping display of duplicate real message:", id);
+                    return;
                 }
 
-                const messageBubble = document.createElement('div'); 
-                messageBubble.classList.add('message-bubble', 'opacity-0'); 
+                const messageBubble = document.createElement('div');
+                messageBubble.classList.add('message-bubble', 'opacity-0');
 
-                if (isOptimistic) { 
-                    messageBubble.setAttribute('data-local-id', id); 
+                if (isOptimistic) {
+                    messageBubble.setAttribute('data-local-id', id);
                 } else {
-                    messageBubble.setAttribute('data-doc-id', id); 
+                    messageBubble.setAttribute('data-doc-id', id);
                     // Add click listener for reply
                     messageBubble.addEventListener('click', () => {
                         setReplyMode(id, message.nickname, message.text);
                     });
                 }
 
-                const isSentByCurrentUser = message.userId === userId; 
+                const isSentByCurrentUser = message.userId === userId;
 
-                if (isSentByCurrentUser) { 
-                    messageBubble.classList.add('sent'); 
+                if (isSentByCurrentUser) {
+                    messageBubble.classList.add('sent');
                 } else {
-                    messageBubble.classList.add('received'); 
+                    messageBubble.classList.add('received');
                 }
 
-                const senderInfo = `${message.genderSymbol ? message.genderSymbol + ' ' : ''}${message.nickname}`; 
+                const senderInfo = `${message.genderSymbol ? message.genderSymbol + ' ' : ''}${message.nickname}`;
                 
                 let replyContent = '';
                 if (message.repliedToMessage) {
@@ -748,14 +834,44 @@
                     `;
                 }
 
+                // Handling file attachments based on image in UI
+                let messageTextContent = `<p>${message.text}</p>`;
+                if (message.text.includes("UI Brief.docx") && message.text.includes("150.30 KB")) { // Simple check for demo
+                    messageTextContent = `
+                        <div class="flex items-center p-3 rounded-lg shadow-sm bg-gray-100 text-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-600 mr-2">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            <div class="flex-grow">
+                                <p class="text-sm font-medium">UI Brief.docx</p>
+                                <p class="text-xs text-gray-500">150.30 KB</p>
+                            </div>
+                            <button class="ml-4 p-2 rounded-full bg-purple-200 hover:bg-purple-300 transition duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-600">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    // Adjust styles for attachment if sent by current user
+                    if (isSentByCurrentUser) {
+                        messageBubble.classList.remove('bg-purple-300'); // Remove the default purple background for sent attachments
+                        messageBubble.classList.add('bg-white'); // Make attachment bubble white
+                    }
+                }
+
+
                 messageBubble.innerHTML = `
                     <div class="sender-info">${senderInfo}</div>
                     ${replyContent}
-                    <p>${message.text}</p>
-                `; 
+                    ${messageTextContent}
+                `;
 
-                chatMessages.appendChild(messageBubble); 
-                setTimeout(() => messageBubble.classList.remove('opacity-0'), 10); 
+                chatMessages.appendChild(messageBubble);
+                setTimeout(() => messageBubble.classList.remove('opacity-0'), 10);
             }
 
             // --- Reply Mode Functions ---
@@ -765,7 +881,6 @@
                 replyPreviewText.textContent = text;
                 replyInputPreview.classList.remove('hidden');
                 messageInput.focus();
-                // Ensure the input area is visible after setting reply mode
                 messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
             }
 
@@ -780,191 +895,183 @@
 
             // --- Typing Indicator Logic ---
             async function setTypingStatus(isTyping) {
-                if (!userId || !db || !currentRoomMood) return; 
+                if (!userId || !db || !currentRoomMood) return;
 
-                const typingDocRef = doc(db, `typing_indicators/${currentRoomMood}/${userId}`); 
+                const typingDocRef = doc(db, `typing_indicators/${currentRoomMood}/${userId}`);
 
                 try {
-                    if (isTyping) { 
+                    if (isTyping) {
                         await setDoc(typingDocRef, {
-                            nickname: currentNickname, 
-                            genderSymbol: currentGenderSymbol, 
-                            timestamp: serverTimestamp() 
+                            nickname: currentNickname,
+                            genderSymbol: currentGenderSymbol,
+                            timestamp: serverTimestamp()
                         });
                     } else {
-                        // Delete the document when not typing
-                        await deleteDoc(typingDocRef); 
+                        await deleteDoc(typingDocRef);
                     }
                 } catch (e) {
-                    console.error("Error setting typing status:", e); 
+                    console.error("Error setting typing status:", e);
                 }
             }
 
             // Debounce function for typing status updates
-            const debounce = (func, delay) => { 
-                let timeout; 
-                return function(...args) { 
-                    const context = this; 
-                    clearTimeout(timeout); 
-                    timeout = setTimeout(() => func.apply(context, args), delay); 
+            const debounce = (func, delay) => {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), delay);
                 };
             };
 
-            // This debounce is for *clearing* the typing status after a pause
-            const debouncedClearTypingStatus = debounce(() => setTypingStatus(false), TYPING_TIMEOUT_MS); 
+            const debouncedClearTypingStatus = debounce(() => setTypingStatus(false), TYPING_TIMEOUT_MS);
 
-            messageInput.addEventListener('input', () => { 
-                adjustTextareaHeight(); 
-                setTypingStatus(true); 
-                debouncedClearTypingStatus(); 
+            messageInput.addEventListener('input', () => {
+                adjustTextareaHeight();
+                setTypingStatus(true);
+                debouncedClearTypingStatus();
             });
             
-            // Listen for blur event to clear typing status if user leaves input field
-            messageInput.addEventListener('blur', () => { 
-                setTypingStatus(false); 
-                clearTimeout(debouncedClearTypingStatus); 
+            messageInput.addEventListener('blur', () => {
+                setTypingStatus(false);
+                clearTimeout(debouncedClearTypingStatus);
             });
 
-            // --- New: Scroll input into view on focus ---
             messageInput.addEventListener('focus', () => {
-                // Use a slight delay to ensure virtual keyboard has time to appear
                 setTimeout(() => {
                     messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }, 100); 
+                }, 100);
             });
 
 
             // Listen for typing indicators from others
             function setupTypingIndicatorListener() {
-                if (!db || !currentRoomMood) return; 
+                if (!db || !currentRoomMood) return;
 
-                const q = collection(db, `typing_indicators/${currentRoomMood}`); 
+                const q = collection(db, `typing_indicators/${currentRoomMood}`);
                 
-                onSnapshot(q, (snapshot) => { 
-                    const typers = []; 
-                    const now = Date.now(); 
-                    snapshot.forEach(doc => { 
-                        const data = doc.data(); 
-                        if (doc.id !== userId && data.timestamp && (now - data.timestamp.toMillis() < TYPING_TIMEOUT_MS * 1.5)) { 
-                            typers.push(data.nickname); 
+                onSnapshot(q, (snapshot) => {
+                    const typers = [];
+                    const now = Date.now();
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        if (doc.id !== userId && data.timestamp && (now - data.timestamp.toMillis() < TYPING_TIMEOUT_MS * 1.5)) {
+                            typers.push(data.nickname);
                         }
                     });
 
-                    if (typers.length > 0) { 
-                        typingIndicatorElement.textContent = `${typers.join(', ')} is typing...`; 
-                        typingIndicatorElement.classList.add('active'); 
+                    if (typers.length > 0) {
+                        typingIndicatorElement.textContent = `${typers.join(', ')} is typing...`;
+                        typingIndicatorElement.classList.add('active');
                     } else {
-                        typingIndicatorElement.textContent = ''; 
-                        typingIndicatorElement.classList.remove('active'); 
+                        typingIndicatorElement.textContent = '';
+                        typingIndicatorElement.classList.remove('active');
                     }
                 }, (error) => {
-                    console.error("Error listening to typing indicators:", error); 
+                    console.error("Error listening to typing indicators:", error);
                 });
             }
 
             // --- Message Cleanup Logic ---
             async function cleanOldMessages() {
-                if (!db || !currentRoomMood) { 
-                    console.warn("Firestore not initialized or room mood not set for cleanup."); 
-                    return; 
+                if (!db || !currentRoomMood) {
+                    console.warn("Firestore not initialized or room mood not set for cleanup.");
+                    return;
                 }
 
-                const sixHoursAgo = new Date(Date.now() - MESSAGE_LIFESPAN_HOURS * 60 * 60 * 1000); 
-                console.log(`Attempting to clean messages older than: ${sixHoursAgo.toLocaleString()}`); 
+                const sixHoursAgo = new Date(Date.now() - MESSAGE_LIFESPAN_HOURS * 60 * 60 * 1000);
+                console.log(`Attempting to clean messages older than: ${sixHoursAgo.toLocaleString()}`);
 
                 try {
-                    const messagesRef = collection(db, `chat_rooms/${currentRoomMood}/messages`); 
-                    const q = query(messagesRef, where("timestamp", "<", sixHoursAgo)); 
+                    const messagesRef = collection(db, `chat_rooms/${currentRoomMood}/messages`);
+                    const q = query(messagesRef, where("timestamp", "<", sixHoursAgo));
                     
-                    const querySnapshot = await getDocs(q); 
+                    const querySnapshot = await getDocs(q);
                     
-                    if (querySnapshot.empty) { 
-                        console.log("No old messages to clean up."); 
-                        return; 
+                    if (querySnapshot.empty) {
+                        console.log("No old messages to clean up.");
+                        return;
                     }
 
-                    const deletePromises = []; 
-                    querySnapshot.forEach((docToDelete) => { 
-                        console.log(`Deleting message: ${docToDelete.id}`); 
-                        deletePromises.push(deleteDoc(doc(db, `chat_rooms/${currentRoomMood}/messages`, docToDelete.id))); 
+                    const deletePromises = [];
+                    querySnapshot.forEach((docToDelete) => {
+                        console.log(`Deleting message: ${docToDelete.id}`);
+                        deletePromises.push(deleteDoc(doc(db, `chat_rooms/${currentRoomMood}/messages`, docToDelete.id)));
                     });
 
-                    await Promise.all(deletePromises); 
-                    console.log(`Cleaned up ${querySnapshot.size} old messages.`); 
+                    await Promise.all(deletePromises);
+                    console.log(`Cleaned up ${querySnapshot.size} old messages.`);
 
                 } catch (error) {
-                    console.error("Error during message cleanup:", error); 
+                    console.error("Error during message cleanup:", error);
                 }
             }
 
-            sendButton.addEventListener('click', () => { 
-                sendMessage(); 
+            sendButton.addEventListener('click', () => {
+                sendMessage();
             });
 
-            messageInput.addEventListener('keypress', (e) => { 
-                if (e.key === 'Enter' && !e.shiftKey) { 
-                    e.preventDefault(); 
-                    sendButton.click(); 
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendButton.click();
                 }
             });
 
             // --- Auto-adjust textarea height ---
             function adjustTextareaHeight() {
-                messageInput.style.height = 'auto'; 
-                messageInput.style.height = messageInput.scrollHeight + 'px'; 
+                messageInput.style.height = 'auto';
+                messageInput.style.height = messageInput.scrollHeight + 'px';
             }
 
             // --- Auto-scroll to bottom, but pause on user scroll up ---
-            let isUserScrolling = false; 
-            let scrollTimeout; 
+            let isUserScrolling = false;
+            let scrollTimeout;
 
-            chatMessages.addEventListener('scroll', () => { 
-                clearTimeout(scrollTimeout); 
-                isUserScrolling = chatMessages.scrollHeight - chatMessages.clientHeight > chatMessages.scrollTop + 20; 
-                scrollTimeout = setTimeout(() => { 
-                    isUserScrolling = false; 
-                }, 500); 
+            chatMessages.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                // Check if user is scrolled up significantly
+                isUserScrolling = chatMessages.scrollHeight - chatMessages.clientHeight > chatMessages.scrollTop + 20;
+                scrollTimeout = setTimeout(() => {
+                    isUserScrolling = false;
+                }, 500);
             });
 
             function scrollToBottom() {
-                if (!isUserScrolling) { 
-                    chatMessages.scrollTop = chatMessages.scrollHeight; 
+                if (!isUserScrolling) {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
             }
 
             // --- Daily Reflection Modal ---
             function showDailyReflectionModal() {
-                const lastModalDate = localStorage.getItem('soulchat_last_modal_date'); 
-                const today = new Date().toDateString(); 
+                const lastModalDate = localStorage.getItem('soulchat_last_modal_date');
+                const today = new Date().toDateString();
 
-                if (lastModalDate !== today) { 
-                    dailyReflectionModal.classList.add('active'); 
-                    localStorage.setItem('soulchat_last_modal_date', today); 
+                if (lastModalDate !== today) {
+                    dailyReflectionModal.classList.add('active');
+                    localStorage.setItem('soulchat_last_modal_date', today);
                 }
             }
 
-            closeReflectionModalButton.addEventListener('click', () => { 
-                dailyReflectionModal.classList.remove('active'); 
+            closeReflectionModalButton.addEventListener('click', () => {
+                dailyReflectionModal.classList.remove('active');
             });
 
             // --- Theme Switcher Logic ---
-            currentThemeIndex = themeNamesOrder.indexOf(currentRoomMood); 
-            if (currentThemeIndex === -1) { 
-                currentThemeIndex = 0; 
-            }
-            currentThemeName = themeNamesOrder[currentThemeIndex]; 
+            // Initial theme setting already done above
 
-            themeSwitcherButton.addEventListener('click', () => { 
-                document.body.classList.remove(visualThemes[currentThemeName].class); 
-                currentThemeIndex = (currentThemeIndex + 1) % themeNamesOrder.length; 
-                currentThemeName = themeNamesOrder[currentThemeIndex]; 
-                document.body.classList.add(visualThemes[currentThemeName].class); 
+            themeSwitcherButton.addEventListener('click', () => {
+                document.body.classList.remove(visualThemes[currentThemeName].class);
+                currentThemeIndex = (currentThemeIndex + 1) % themeNamesOrder.length;
+                currentThemeName = themeNamesOrder[currentThemeIndex];
+                document.body.classList.add(visualThemes[currentThemeName].class);
             });
 
 
             // Initial calls
-            adjustTextareaHeight(); 
-            showDailyReflectionModal(); 
+            adjustTextareaHeight();
+            showDailyReflectionModal();
         });
     </script>
 </body>
