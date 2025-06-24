@@ -20,6 +20,7 @@
             --discord-red: #ed4245; /* Error/Danger */
             --discord-border-color: #26282b; /* Subtle border */
             --discord-message-bg: #32353b; /* Message bubble background */
+            --sent-message-bg: #4f545c; /* Darker grey for sent messages */
         }
 
         /* Base styles */
@@ -125,18 +126,17 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .message-bubble.sent, .message-bubble.received {
+        .message-bubble.received {
             align-self: flex-start; /* Messages start from the left */
             margin-right: auto; /* Push content to left */
             border-radius: 0.375rem; /* Uniform rounding */
+            background-color: var(--discord-message-bg); /* Default background for received */
         }
         .message-bubble.sent {
-            /* No specific background for 'sent' unless it's a special message.
-               Discord doesn't differentiate sent/received by bubble color.
-               We'll keep it transparent and use sender info. */
-        }
-        .message-bubble.received {
-            /* Also transparent */
+            align-self: flex-end; /* Push sent messages to the right */
+            margin-left: auto; /* Push content to right */
+            border-radius: 0.375rem; /* Uniform rounding */
+            background-color: var(--sent-message-bg); /* Distinct background for sent */
         }
 
         .message-bubble .sender-info {
@@ -760,14 +760,12 @@
 
                 const isSentByCurrentUser = message.userId === userId; 
 
-                // Discord doesn't visually distinguish 'sent' and 'received' bubbles by background
-                // so we don't need these classes affecting background, only alignment if ever needed.
-                // For a Discord look, all messages appear aligned left.
-                // if (isSentByCurrentUser) { 
-                //     messageBubble.classList.add('sent'); 
-                // } else {
-                //     messageBubble.classList.add('received'); 
-                // }
+                // Apply 'sent' or 'received' class for alignment and distinct background
+                if (isSentByCurrentUser) { 
+                    messageBubble.classList.add('sent'); 
+                } else {
+                    messageBubble.classList.add('received'); 
+                }
 
                 const senderInfo = `${message.genderSymbol ? message.genderSymbol + ' ' : ''}${message.nickname}`; 
                 
