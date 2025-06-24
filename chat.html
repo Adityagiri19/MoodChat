@@ -77,8 +77,8 @@
             font-family: 'Inter', sans-serif;
             background-color: #d1c4e9; /* Light purple background for the whole page */
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; /* Keeps horizontal centering */
+            align-items: center; /* Vertically centered on desktop by default */
             min-height: 100vh;
             margin: 0;
             overflow: hidden;
@@ -455,13 +455,15 @@
             .phone-mockup-container {
                 border-radius: 3rem; /* Apply the rounded border on mobile */
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Keep shadow on mobile */
-                width: 95%; /* Adjust width to leave some space on sides */
-                height: calc(100vh - 2rem); /* Keep height calculation */
+                width: calc(100% - 2rem); /* Adjust width to leave some space on sides */
+                height: calc(100vh - 2rem); /* Initial height will be overridden by JS for keyboard support */
                 margin: 1rem auto; /* Center with margin */
                 border: 8px solid white; /* Keep white border on mobile */
             }
             body {
                 padding: 0;
+                align-items: flex-start; /* Crucial: Align content to the top on mobile for keyboard handling */
+                overflow-y: auto; /* Allow scrolling if content extends beyond visual viewport */
             }
             .top-bar {
                 padding: 1rem 1.25rem;
@@ -881,6 +883,7 @@
                 replyPreviewText.textContent = text;
                 replyInputPreview.classList.remove('hidden');
                 messageInput.focus();
+                // Scroll input area into view when entering reply mode
                 messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
             }
 
@@ -937,6 +940,7 @@
                 clearTimeout(debouncedClearTypingStatus);
             });
 
+            // Re-confirm focus listener for input to ensure visibility
             messageInput.addEventListener('focus', () => {
                 setTimeout(() => {
                     messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -1072,6 +1076,23 @@
             // Initial calls
             adjustTextareaHeight();
             showDailyReflectionModal();
+
+            // --- New: VisualViewport API for keyboard covering issue ---
+            if (window.visualViewport) {
+                const phoneMockupContainer = document.querySelector('.phone-mockup-container');
+                const updateContainerHeight = () => {
+                    // Set the height of the phone mockup container to the visual viewport height
+                    phoneMockupContainer.style.height = `${window.visualViewport.height}px`;
+                    // Ensure that the chat messages area scrolls to the bottom after the height adjustment
+                    scrollToBottom();
+                };
+
+                // Initial adjustment on load
+                updateContainerHeight();
+
+                // Listen for resize events on the visual viewport (e.g., keyboard appearance/disappearance)
+                window.visualViewport.addEventListener('resize', updateContainerHeight);
+            }
         });
     </script>
 </body>
