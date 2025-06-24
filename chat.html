@@ -803,6 +803,7 @@
                 replyInputPreview.classList.remove('hidden');
                 messageInput.focus();
                 // Ensure the input area is visible after setting reply mode
+                // This is crucial for mobile keyboards
                 messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
             }
 
@@ -863,6 +864,8 @@
             });
 
             // --- New: Scroll input into view on focus ---
+            // This event listener will ensure the input area is scrolled into view when focused,
+            // which helps with virtual keyboards on mobile devices.
             messageInput.addEventListener('focus', () => {
                 // Use a slight delay to ensure virtual keyboard has time to appear
                 setTimeout(() => {
