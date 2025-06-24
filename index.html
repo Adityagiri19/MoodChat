@@ -6,154 +6,240 @@
     <title>MoodChat - Feel. Share. Heal.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Custom CSS variables for pastel themes */
+        /* Custom CSS variables for a modern, darker theme inspired by chat.html */
         :root {
-            --color-lavender: #E6E6FA;
-            --color-sky-blue: #87CEEB;
-            --color-mint: #B0E0E6;
-            --color-peach: #FFDAB9;
-            --color-soft-gray: #f7f7f7;
-            --color-dark-text: #333;
+            --color-dark-bg: #2f3136; /* Discord bg-secondary */
+            --color-darker-bg: #202225; /* Discord bg-tertiary */
+            --color-text-primary: #dcddde; /* Discord text-primary */
+            --color-text-secondary: #72767d; /* Discord text-secondary */
+            --color-accent-blue: #5865f2; /* Discord Blue */
+            --color-accent-green: #3ba55c; /* Discord Green */
+            --color-red: #ed4245; /* Discord Red */
+            --color-border: #26282b; /* Subtle border */
+            --color-card-bg: #36393f; /* Discord bg-primary for the card */
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, var(--color-sky-blue) 0%, var(--color-mint) 100%);
+            background-color: var(--color-darker-bg); /* Use darker background for body */
             display: flex;
-            flex-direction: column; /* Changed to column to stack header and main content */
-            justify-content: flex-start; /* Align items to the start for header placement */
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
             min-height: 100vh;
-            color: var(--color-dark-text);
-            padding: 1rem; /* Add some overall padding for smaller screens */
-            box-sizing: border-box; /* Include padding in element's total width and height */
+            color: var(--color-text-primary);
+            padding: 1.5rem 1rem; /* Slightly more padding */
+            box-sizing: border-box;
+            overflow-y: auto; /* Allow scrolling if content overflows */
         }
 
-        .hero-gradient {
-            background: linear-gradient(135deg, var(--color-peach) 0%, var(--color-lavender) 100%);
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem; /* Space between header and card */
         }
 
-        .entry-card {
-            background-color: white;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border-radius: 2rem; /* More rounded */
-            padding: 2.5rem;
-            max-width: 90%; /* Max width for responsiveness on smaller screens */
-            width: 100%; /* Take full available width within max-width */
+        .hero-section {
+            background: linear-gradient(135deg, var(--color-accent-blue) 0%, #7289da 100%); /* Blue gradient for hero */
+            padding: 2.5rem 1.5rem;
+            border-radius: 0.75rem 0.75rem 0 0; /* Rounded top, flat bottom */
             text-align: center;
             position: relative;
             z-index: 10;
-            margin-top: 2rem; /* Space between header and the box */
-
-            /* Added explicit max-width for larger screens for better control */
-            @media (min-width: 768px) {
-                max-width: 450px;
-                margin-top: 4rem; /* More space on larger screens */
-            }
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Soft shadow */
         }
 
-        .mood-selector button,
-        .gender-selector button { /* Apply similar styling to gender buttons */
-            transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
-        }
-        .mood-selector button:hover,
-        .gender-selector button:hover {
-            transform: translateY(-3px);
-        }
-        .mood-selector button.selected {
-            background-color: var(--color-peach);
-            transform: scale(1.1);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-        }
-        .gender-selector button.selected { /* Specific selected style for gender buttons */
-            background-color: var(--color-mint); /* A slightly different pastel for distinction */
-            transform: scale(1.1);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        .entry-card {
+            background-color: var(--color-card-bg); /* Darker card background */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Deeper, darker shadow */
+            border-radius: 0.75rem; /* Less rounded, more app-like */
+            padding: 2rem;
+            max-width: 90%;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            border: 1px solid var(--color-border); /* Subtle border */
         }
 
-        .testimonial-bubble {
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 1.5rem;
-            padding: 0.75rem 1.25rem;
-            font-size: 0.9rem;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            display: inline-block;
-            margin: 0.5rem;
-            max-width: 250px;
-        }
-
-        /* Specific styles for responsive testimonial layout */
         @media (min-width: 768px) {
-            .testimonials-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            .entry-card {
+                max-width: 480px; /* Slightly wider for better content fit */
             }
+        }
+
+        .input-field {
+            background-color: var(--color-darker-bg);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem; /* Smaller border-radius for inputs */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-accent-blue);
+            box-shadow: 0 0 0 1px var(--color-accent-blue);
+        }
+
+        .selector-button {
+            transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease;
+            background-color: var(--color-darker-bg);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem; /* Slightly smaller text for buttons */
+        }
+        .selector-button:hover {
+            background-color: color-mix(in srgb, var(--color-darker-bg) 90%, white 10%);
+            transform: translateY(-2px);
+            border-color: var(--color-text-secondary);
+        }
+        .selector-button.selected {
+            background-color: var(--color-accent-blue);
+            color: white;
+            border-color: var(--color-accent-blue);
+            transform: scale(1.05); /* Slightly less dramatic scale */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .selector-button.selected .text-sm { /* Ensure text in selected buttons is white */
+            color: white !important;
+        }
+
+        .gender-selector button.selected {
+            background-color: var(--color-accent-green); /* Green for gender selection */
+            border-color: var(--color-accent-green);
+        }
+
+        .enter-button {
+            background-color: var(--color-accent-blue);
+            color: white;
+            font-weight: 600; /* Semibold */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem; /* Match other elements */
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .enter-button:hover {
+            background-color: color-mix(in srgb, var(--color-accent-blue) 85%, black 15%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .enter-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-section {
+            background-color: var(--color-darker-bg);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+        }
+        .info-section h3 {
+            color: var(--color-accent-blue); /* Title in accent color */
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .info-section h4 {
+            color: var(--color-text-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+        .info-section p, .info-section li {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .info-section ol li strong {
+            color: var(--color-text-primary);
+        }
+
+        .text-shadow-md {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
-<body class="selection:bg-pink-100 selection:text-pink-800">
+<body class="selection:bg-blue-800 selection:text-white">
 
-    <header class="w-full text-center py-4 px-4 sm:px-6">
-        <h1 class="text-4xl font-extrabold text-white text-shadow-md">MoodChat</h1>
-        </header>
+    <header>
+        <h1 class="text-5xl font-extrabold text-white text-shadow-md">MoodChat</h1>
+    </header>
 
     <div class="entry-card">
-        <div class="hero-gradient p-6 rounded-t-2xl -mt-10 mx-auto w-full max-w-full -mb-4">
+        <div class="hero-section">
             <h1 class="text-4xl font-bold text-white mb-2 leading-tight">Feel. Share. Heal.</h1>
-            <p class="text-white text-opacity-80 text-lg">Your safe space to connect.</p>
+            <p class="text-white text-opacity-90 text-lg">Your safe space to connect.</p>
         </div>
 
-        <p class="text-gray-600 text-md mt-6 mb-8 px-4">
+        <p class="text-gray-400 text-md mt-6 mb-8 px-4">
             Share your thoughts anonymously. Join comforting conversations and find support.
         </p>
 
         <div class="space-y-6">
             <div>
-                <label for="nickname-input" class="block text-left text-gray-700 text-sm font-medium mb-2">Your anonymous identity:</label>
+                <label for="nickname-input" class="block text-left text-gray-300 text-sm font-medium mb-2">Your anonymous identity:</label>
                 <input
                     type="text"
                     id="nickname-input"
                     readonly
-                    class="w-full p-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-700 focus:outline-none cursor-default"
+                    class="w-full input-field cursor-default"
                 >
             </div>
 
             <div>
-                <label class="block text-left text-gray-700 text-sm font-medium mb-2">I identify as:</label>
-                <div id="gender-selector" class="gender-selector grid grid-cols-2 gap-2">
-                    <button type="button" data-gender="Male" data-symbol="♂" class="p-3 bg-gray-100 rounded-xl text-lg sm:text-xl md:text-2xl hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-mint">♂ Male</button>
-                    <button type="button" data-gender="Female" data-symbol="♀" class="p-3 bg-gray-100 rounded-xl text-lg sm:text-xl md:text-2xl hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-mint">♀ Female</button>
+                <label class="block text-left text-gray-300 text-sm font-medium mb-2">I identify as:</label>
+                <div id="gender-selector" class="gender-selector grid grid-cols-2 gap-3">
+                    <button type="button" data-gender="Male" data-symbol="♂" class="selector-button">
+                        <i class="fas fa-male text-2xl mb-1"></i>
+                        <span class="text-sm">Male</span>
+                    </button>
+                    <button type="button" data-gender="Female" data-symbol="♀" class="selector-button">
+                        <i class="fas fa-female text-2xl mb-1"></i>
+                        <span class="text-sm">Female</span>
+                    </button>
                 </div>
             </div>
 
             <div>
-    <label class="block text-left text-gray-700 text-sm font-medium mb-2">How are you feeling today?</label>
-    <div id="mood-selector" class="mood-selector grid grid-cols-3 gap-2">
-        <button type="button" data-mood="Crazy" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl text-2xl hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-peach">
-            🤪
-            <span class="text-sm mt-1">Crazy</span>
-        </button>
-        <button type="button" data-mood="Joy" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl text-2xl hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-peach">
-            😊
-            <span class="text-sm mt-1">Joy</span>
-        </button>
-        <button type="button" data-mood="Sadness" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl text-2xl hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-peach">
-            😔
-            <span class="text-sm mt-1">Sadness</span>
-        </button>
-    </div>
-</div>
+                <label class="block text-left text-gray-300 text-sm font-medium mb-2">How are you feeling today?</label>
+                <div id="mood-selector" class="mood-selector grid grid-cols-3 gap-3">
+                    <button type="button" data-mood="Comfort" class="selector-button">
+                        <i class="fas fa-hand-holding-heart text-2xl mb-1"></i>
+                        <span class="text-sm mt-1">Comfort</span>
+                    </button>
+                    <button type="button" data-mood="Joy" class="selector-button">
+                        <i class="fas fa-smile-beam text-2xl mb-1"></i>
+                        <span class="text-sm mt-1">Joy</span>
+                    </button>
+                    <button type="button" data-mood="Sadness" class="selector-button">
+                        <i class="fas fa-frown text-2xl mb-1"></i>
+                        <span class="text-sm mt-1">Sadness</span>
+                    </button>
+                </div>
+            </div>
 
             <button
                 id="enter-room-button"
-                class="w-full py-3 px-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl text-lg transition-all duration-300 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+                class="w-full enter-button"
             >
                 Enter Room
             </button>
 
-            <div class="mt-8 text-left text-gray-700 px-4">
+            <div class="info-section">
                 <h3 class="text-xl font-bold mb-3">Welcome to MoodChat!</h3>
                 <p class="mb-4">
                     MoodChat is a safe and anonymous space designed for you to express your feelings and connect with others who might be experiencing similar emotions.
@@ -164,7 +250,7 @@
                         <strong>Your anonymous identity:</strong> A unique nickname is generated for you. This is how you'll be known in the chat room, ensuring your privacy.
                     </li>
                     <li>
-                        <strong>I identify as:</strong> Select your gender identity. This helps in connecting you with relevant conversations and fostering a comfortable environment.
+                        <strong>Identify as:</strong> Select your gender identity. This helps in connecting you with relevant conversations and fostering a comfortable environment.
                     </li>
                     <li>
                         <strong>How are you feeling today?:</strong> Choose the emoji that best represents your current mood. This helps us direct you to a chat room where others might be feeling similarly, allowing for more empathetic interactions.
@@ -179,7 +265,7 @@
             </div>
         </div>
 
-        <p class="text-xs text-gray-400 mt-6 px-4">
+        <p class="text-xs text-gray-500 mt-6 px-4">
             You don’t need to log in. No personal data is stored about you.
         </p>
     </div>
@@ -212,11 +298,12 @@
 
             // Mood map for the homepage (used for selection and passing to chat.html)
             // This map is used to determine which mood is selected.
+            // Changed "Crazy" to "Comfort" as per the new mood buttons
             const availableMoods = ["Comfort", "Joy", "Sadness"];
 
             moodSelector.addEventListener('click', (event) => {
-                const target = event.target;
-                if (target.tagName === 'BUTTON' && target.dataset.mood) {
+                const target = event.target.closest('button'); // Ensure we get the button
+                if (target && target.dataset.mood) {
                     const currentSelected = moodSelector.querySelector('.selected');
                     if (currentSelected) {
                         currentSelected.classList.remove('selected');
@@ -228,34 +315,48 @@
             });
 
             genderSelector.addEventListener('click', (event) => {
-                const target = event.target;
-                const button = target.closest('button');
-                if (button && button.dataset.gender) {
+                const target = event.target.closest('button'); // Ensure we get the button
+                if (target && target.dataset.gender) {
                     const currentSelected = genderSelector.querySelector('.selected');
                     if (currentSelected) {
                         currentSelected.classList.remove('selected');
                     }
-                    button.classList.add('selected');
-                    selectedGenderSymbol = button.dataset.symbol;
+                    target.classList.add('selected');
+                    selectedGenderSymbol = target.dataset.symbol;
                     updateDisplayedNickname();
-                    console.log(`Selected Gender: ${button.dataset.gender} (${selectedGenderSymbol})`);
+                    console.log(`Selected Gender: ${target.dataset.gender} (${selectedGenderSymbol})`);
                 }
             });
 
             enterRoomButton.addEventListener('click', () => {
+                // Remove existing red borders
+                genderSelector.style.border = '';
+                moodSelector.style.border = '';
+
+                let isValid = true;
+
                 if (!selectedGenderSymbol) {
-                    genderSelector.style.border = '2px solid red';
-                    setTimeout(() => genderSelector.style.border = 'none', 1500);
+                    genderSelector.style.border = '2px solid var(--color-red)';
+                    genderSelector.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     console.warn("Please select your gender identity before entering the room.");
-                    return;
+                    isValid = false;
                 }
 
                 if (!selectedMood) {
-                    moodSelector.style.border = '2px solid red';
-                    setTimeout(() => moodSelector.style.border = 'none', 1500);
+                    moodSelector.style.border = '2px solid var(--color-red)';
+                    if (isValid) { // Only scroll if gender wasn't the reason for scrolling
+                         moodSelector.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                     console.warn("Please select a mood before entering the room.");
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    // Add a temporary animation or highlight for feedback if selections are missing
+                    // For example, pulse the border briefly or show a small message
                     return;
                 }
+
 
                 const finalNickname = nicknameInput.value;
                 console.log(`Entering room with Nickname: "${finalNickname}" and Mood: "${selectedMood}"`);
