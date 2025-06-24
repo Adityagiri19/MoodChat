@@ -266,19 +266,19 @@
         /* --- END: Added CSS to hide scrollbar arrows --- */
 
 
-        .send-button, .emoji-button {
+        .send-button {
             background-color: var(--theme-primary);
             transition: background-color 0.3s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
             color: var(--theme-text-light); /* White icon */
         }
 
-        .send-button:hover, .emoji-button:hover {
+        .send-button:hover {
             background-color: color-mix(in srgb, var(--theme-primary) 80%, black 20%); /* Darken on hover */
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Slightly larger shadow on hover */
         }
 
-        .send-button:active, .emoji-button:active {
+        .send-button:active {
             transform: scale(0.92); /* Slightly more pronounced active state */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -461,7 +461,7 @@
 
         <div id="typing-indicator" class="typing-indicator pl-4 text-sm text-gray-500 italic"></div>
 
-        <div class="message-input-area">
+        <div class="message-input-area" id="message-input-area">
             <div id="reply-input-preview" class="reply-input-preview hidden">
                 <div class="reply-text-content">
                     <div class="reply-sender"></div>
@@ -478,9 +478,6 @@
                     class="message-input flex-grow"
                     rows="1"
                 ></textarea>
-                <button id="emoji-button" class="emoji-button w-12 h-12 rounded-full flex items-center justify-center text-white text-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" title="Insert Emoji">
-                    <i class="fas fa-smile"></i>
-                </button>
                 <button id="send-button" class="send-button w-12 h-12 rounded-full flex items-center justify-center text-white text-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
                     <i class="fas fa-paper-plane"></i>
                 </button>
@@ -521,6 +518,7 @@
             const messageInput = document.getElementById('message-input'); 
             const sendButton = document.getElementById('send-button'); 
             const typingIndicatorElement = document.getElementById('typing-indicator'); 
+            const messageInputArea = document.getElementById('message-input-area'); // New: Get the input area itself
             
             const dailyReflectionModal = document.getElementById('daily-reflection-modal'); 
             const closeReflectionModalButton = document.getElementById('close-reflection-modal-button'); 
@@ -533,9 +531,6 @@
             const replyPreviewSender = replyInputPreview.querySelector('.reply-sender');
             const replyPreviewText = replyInputPreview.querySelector('.reply-message-text');
             const cancelReplyBtn = document.getElementById('cancel-reply-btn');
-
-            // New Emoji Button
-            const emojiButton = document.getElementById('emoji-button');
 
 
             let currentNickname = ''; 
@@ -770,6 +765,8 @@
                 replyPreviewText.textContent = text;
                 replyInputPreview.classList.remove('hidden');
                 messageInput.focus();
+                // Ensure the input area is visible after setting reply mode
+                messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
             }
 
             function cancelReply() {
@@ -827,6 +824,15 @@
                 setTypingStatus(false); 
                 clearTimeout(debouncedClearTypingStatus); 
             });
+
+            // --- New: Scroll input into view on focus ---
+            messageInput.addEventListener('focus', () => {
+                // Use a slight delay to ensure virtual keyboard has time to appear
+                setTimeout(() => {
+                    messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 100); 
+            });
+
 
             // Listen for typing indicators from others
             function setupTypingIndicatorListener() {
@@ -900,18 +906,6 @@
                     e.preventDefault(); 
                     sendButton.click(); 
                 }
-            });
-
-            // --- Emoji Button Logic (Placeholder) ---
-            emojiButton.addEventListener('click', () => {
-                // In a real application, you would open an emoji picker here.
-                // For this example, we'll just insert a default emoji.
-                const currentText = messageInput.value;
-                messageInput.value = currentText + '😊';
-                adjustTextareaHeight();
-                messageInput.focus(); // Keep focus on the textarea
-                setTypingStatus(true); // Indicate typing after inserting emoji
-                debouncedClearTypingStatus(); // Reset debounce for typing status
             });
 
             // --- Auto-adjust textarea height ---
