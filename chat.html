@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoodChat - Your Safe Space</title>
+    <title>SoulChat - Your Safe Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -161,6 +161,28 @@
             color: var(--theme-text-dark); /* Ensure message text uses dark theme color */
         }
 
+        /* Reply specific styling */
+        .message-bubble .reply-preview {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-left: 3px solid var(--theme-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .message-bubble .reply-preview .reply-sender {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--theme-text-dark);
+            opacity: 0.8;
+        }
+        .message-bubble .reply-preview .reply-text {
+            font-size: 0.8rem;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* Message input area */
         .message-input-area {
             padding: 1rem 1.25rem; /* Match chat padding */
@@ -169,6 +191,47 @@
             border-bottom-left-radius: 1.5rem;
             border-bottom-right-radius: 1.5rem;
         }
+
+        .reply-input-preview {
+            background-color: var(--theme-bubble-other);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--theme-primary);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .reply-input-preview .reply-text-content {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .reply-input-preview .reply-sender {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--theme-text-dark);
+            margin-bottom: 0.2rem;
+        }
+        .reply-input-preview .reply-message-text {
+            font-size: 0.85rem;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .reply-input-preview .cancel-reply-btn {
+            background: none;
+            border: none;
+            color: #777;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .reply-input-preview .cancel-reply-btn:hover {
+            color: #3F424E;
+        }
+
 
         .message-input {
             border-radius: 2rem;
@@ -203,19 +266,19 @@
         /* --- END: Added CSS to hide scrollbar arrows --- */
 
 
-        .send-button {
+        .send-button, .emoji-button {
             background-color: var(--theme-primary);
             transition: background-color 0.3s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
             color: var(--theme-text-light); /* White icon */
         }
 
-        .send-button:hover {
+        .send-button:hover, .emoji-button:hover {
             background-color: color-mix(in srgb, var(--theme-primary) 80%, black 20%); /* Darken on hover */
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Slightly larger shadow on hover */
         }
 
-        .send-button:active {
+        .send-button:active, .emoji-button:active {
             transform: scale(0.92); /* Slightly more pronounced active state */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -399,6 +462,15 @@
         <div id="typing-indicator" class="typing-indicator pl-4 text-sm text-gray-500 italic"></div>
 
         <div class="message-input-area">
+            <div id="reply-input-preview" class="reply-input-preview hidden">
+                <div class="reply-text-content">
+                    <div class="reply-sender"></div>
+                    <div class="reply-message-text"></div>
+                </div>
+                <button id="cancel-reply-btn" class="cancel-reply-btn">
+                    <i class="fas fa-times-circle"></i>
+                </button>
+            </div>
             <div class="flex gap-2">
                 <textarea
                     id="message-input"
@@ -406,6 +478,9 @@
                     class="message-input flex-grow"
                     rows="1"
                 ></textarea>
+                <button id="emoji-button" class="emoji-button w-12 h-12 rounded-full flex items-center justify-center text-white text-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" title="Insert Emoji">
+                    <i class="fas fa-smile"></i>
+                </button>
                 <button id="send-button" class="send-button w-12 h-12 rounded-full flex items-center justify-center text-white text-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
                     <i class="fas fa-paper-plane"></i>
                 </button>
@@ -435,6 +510,9 @@
         const TYPING_TIMEOUT_MS = 3000; 
         const MESSAGE_LIFESPAN_HOURS = 6; 
 
+        // --- Reply State ---
+        let replyingToMessage = null; // Stores { docId, nickname, text } of the message being replied to
+
 
         document.addEventListener('DOMContentLoaded', async () => {
             const roomNameElement = document.getElementById('room-name'); 
@@ -442,25 +520,27 @@
             const chatMessages = document.getElementById('chat-messages'); 
             const messageInput = document.getElementById('message-input'); 
             const sendButton = document.getElementById('send-button'); 
-            // const postLimitDisplay = document.getElementById('post-limit-display'); // Removed for unlimited chats
             const typingIndicatorElement = document.getElementById('typing-indicator'); 
             
             const dailyReflectionModal = document.getElementById('daily-reflection-modal'); 
             const closeReflectionModalButton = document.getElementById('close-reflection-modal-button'); 
             
-            // Removed payment modal related elements for unlimited chats
-            // const paymentModal = document.getElementById('payment-modal'); 
-            // const premiumButton = document.getElementById('premium-button'); 
-            // const closePaymentModalButton = document.getElementById('close-payment-modal-button');
-
             const themeSwitcherButton = document.getElementById('theme-switcher-button'); 
             const activeUsersElement = document.getElementById('active-users'); 
+
+            // Reply UI elements
+            const replyInputPreview = document.getElementById('reply-input-preview');
+            const replyPreviewSender = replyInputPreview.querySelector('.reply-sender');
+            const replyPreviewText = replyInputPreview.querySelector('.reply-message-text');
+            const cancelReplyBtn = document.getElementById('cancel-reply-btn');
+
+            // New Emoji Button
+            const emojiButton = document.getElementById('emoji-button');
+
 
             let currentNickname = ''; 
             let currentRoomMood = ''; 
             let currentGenderSymbol = ''; 
-            // let messagesSentToday = 0; // Removed for unlimited chats
-            // const MAX_POSTS_PER_DAY = 30; // Removed for unlimited chats
 
             let db; // Firestore instance
             let auth; // Auth instance
@@ -498,7 +578,6 @@
                         console.log("Firebase Authenticated! User ID:", userId); 
                         setupRealtimeChat(); 
                         setupTypingIndicatorListener(); 
-                        // Start periodic message cleanup
                         cleanOldMessages(); 
                         setInterval(cleanOldMessages, 30 * 60 * 1000); 
                     } else {
@@ -551,48 +630,44 @@
                     return; 
                 }
 
-                // Removed post limit check for unlimited chats
-                // if (messagesSentToday >= MAX_POSTS_PER_DAY) { 
-                //     showPaymentModal(); 
-                //     return; 
-                // }
-
                 try {
-                    // Generate a unique local ID for optimistic display
                     const localMessageId = 'local-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9); 
 
-                    // Optimistically display message first for instant feedback
-                    displayMessage({
+                    const messageData = {
                         userId: userId, 
                         nickname: currentNickname, 
                         genderSymbol: currentGenderSymbol, 
                         text: messageText, 
                         timestamp: new Date(), 
                         localId: localMessageId 
-                    }, localMessageId, true); 
+                    };
+
+                    // Add reply information if in reply mode
+                    if (replyingToMessage) {
+                        messageData.repliedToMessage = {
+                            docId: replyingToMessage.docId,
+                            nickname: replyingToMessage.nickname,
+                            text: replyingToMessage.text
+                        };
+                        cancelReply(); // Clear reply mode after sending
+                    }
+
+                    // Optimistically display message
+                    displayMessage(messageData, localMessageId, true); 
 
                     messageInput.value = ''; 
                     adjustTextareaHeight(); 
-                    // messagesSentToday++; // Removed for unlimited chats
-                    // updatePostLimitDisplay(); // Removed for unlimited chats
                     
-                    // Clear typing status immediately after sending a message
                     setTypingStatus(false); 
 
                     // Add message to Firestore
                     await addDoc(collection(db, `chat_rooms/${currentRoomMood}/messages`), {
-                        userId: userId, 
-                        nickname: currentNickname, 
-                        genderSymbol: currentGenderSymbol, 
-                        text: messageText, 
-                        timestamp: serverTimestamp(), 
-                        localId: localMessageId 
+                        ...messageData,
+                        timestamp: serverTimestamp() 
                     });
 
                 } catch (e) {
                     console.error("Error adding document: ", e); 
-                    // Handle error: potentially remove the optimistically added message
-                    // or show a "Failed to send" status on it.
                 }
             }
 
@@ -608,28 +683,22 @@
                         const docId = change.doc.id; 
 
                         if (change.type === "added") { 
-                            // If this message was sent by the current user AND has a localId
                             if (message.userId === userId && message.localId) { 
-                                // Find the optimistically displayed message by its localId
                                 const optimisticElement = document.querySelector(`.message-bubble[data-local-id="${message.localId}"]`); 
                                 if (optimisticElement) { 
-                                    // If found, remove the optimistic element
                                     optimisticElement.remove(); 
                                     console.log("Removed optimistic message, now displaying real:", docId); 
                                 }
                             }
-                            // Always display the message coming from Firestore (real or confirmed)
                             console.log("Displaying message from Firestore:", docId, message); 
                             displayMessage(message, docId); 
                         } else if (change.type === "modified") { 
-                            // Handle message modifications (e.g., reactions, edits)
                             console.log("Modified message:", message); 
                             const existingMessageElement = document.querySelector(`.message-bubble[data-doc-id="${docId}"]`); 
                             if (existingMessageElement) { 
                                 existingMessageElement.querySelector('p').textContent = message.text; 
                             }
                         } else if (change.type === "removed") { 
-                            // Handle message deletions
                             console.log("Removed message:", message); 
                             const existingMessageElement = document.querySelector(`.message-bubble[data-doc-id="${docId}"]`); 
                             if (existingMessageElement) { 
@@ -646,7 +715,6 @@
 
             // --- Display Message Function (Modified for consistency and optimistic flag) ---
             function displayMessage(message, id, isOptimistic = false) {
-                // Before displaying, check if a real message with this docId already exists
                 if (document.querySelector(`.message-bubble[data-doc-id="${id}"]`) && !isOptimistic) { 
                     console.log("Skipping display of duplicate real message:", id); 
                     return; 
@@ -659,9 +727,12 @@
                     messageBubble.setAttribute('data-local-id', id); 
                 } else {
                     messageBubble.setAttribute('data-doc-id', id); 
+                    // Add click listener for reply
+                    messageBubble.addEventListener('click', () => {
+                        setReplyMode(id, message.nickname, message.text);
+                    });
                 }
 
-                // Determine if the message was sent by the current user
                 const isSentByCurrentUser = message.userId === userId; 
 
                 if (isSentByCurrentUser) { 
@@ -672,14 +743,43 @@
 
                 const senderInfo = `${message.genderSymbol ? message.genderSymbol + ' ' : ''}${message.nickname}`; 
                 
+                let replyContent = '';
+                if (message.repliedToMessage) {
+                    replyContent = `
+                        <div class="reply-preview">
+                            <div class="reply-sender">${message.repliedToMessage.nickname}</div>
+                            <div class="reply-text">${message.repliedToMessage.text}</div>
+                        </div>
+                    `;
+                }
+
                 messageBubble.innerHTML = `
                     <div class="sender-info">${senderInfo}</div>
+                    ${replyContent}
                     <p>${message.text}</p>
                 `; 
 
                 chatMessages.appendChild(messageBubble); 
                 setTimeout(() => messageBubble.classList.remove('opacity-0'), 10); 
             }
+
+            // --- Reply Mode Functions ---
+            function setReplyMode(docId, nickname, text) {
+                replyingToMessage = { docId, nickname, text };
+                replyPreviewSender.textContent = nickname;
+                replyPreviewText.textContent = text;
+                replyInputPreview.classList.remove('hidden');
+                messageInput.focus();
+            }
+
+            function cancelReply() {
+                replyingToMessage = null;
+                replyInputPreview.classList.add('hidden');
+                replyPreviewSender.textContent = '';
+                replyPreviewText.textContent = '';
+            }
+
+            cancelReplyBtn.addEventListener('click', cancelReply);
 
             // --- Typing Indicator Logic ---
             async function setTypingStatus(isTyping) {
@@ -739,8 +839,6 @@
                     const now = Date.now(); 
                     snapshot.forEach(doc => { 
                         const data = doc.data(); 
-                        // Only show if it's not our own typing status AND it's recent (e.g., within TYPING_TIMEOUT_MS * 1.5)
-                        // Using a slightly longer window than the debounce for robustness
                         if (doc.id !== userId && data.timestamp && (now - data.timestamp.toMillis() < TYPING_TIMEOUT_MS * 1.5)) { 
                             typers.push(data.nickname); 
                         }
@@ -793,45 +891,8 @@
                 }
             }
 
-
-            // --- Post Limit Logic (using localStorage for daily reset) ---
-            // This entire section is removed for unlimited chats.
-            // function updatePostLimitDisplay() {
-            //     const remaining = MAX_POSTS_PER_DAY - messagesSentToday;
-            //     postLimitDisplay.textContent = `Posts left today: ${remaining}`;
-            //     if (remaining <= 0) {
-            //         messageInput.placeholder = "Daily limit reached. Go Premium!";
-            //         messageInput.disabled = true;
-            //         sendButton.disabled = true;
-            //         messageInput.classList.add('opacity-50', 'cursor-not-allowed');
-            //         sendButton.classList.add('opacity-50', 'cursor-not-allowed');
-            //         setTypingStatus(false); 
-            //     } else {
-            //         messageInput.placeholder = "Share your thoughts...";
-            //         messageInput.disabled = false;
-            //         sendButton.disabled = false;
-            //         messageInput.classList.remove('opacity-50', 'cursor-not-allowed');
-            //         sendButton.classList.remove('opacity-50', 'cursor-not-allowed');
-            //     }
-            // }
-
-            // function checkDailyPostLimit() {
-            //     const lastPostDate = localStorage.getItem('soulchat_last_post_date');
-            //     const today = new Date().toDateString();
-
-            //     if (lastPostDate === today) {
-            //         messagesSentToday = parseInt(localStorage.getItem('soulchat_posts_today') || '0');
-            //     } else {
-            //         messagesSentToday = 0; 
-            //         localStorage.setItem('soulchat_last_post_date', today);
-            //     }
-            //     updatePostLimitDisplay();
-            // }
-
-            // Save post count on send
             sendButton.addEventListener('click', () => { 
                 sendMessage(); 
-                // localStorage.setItem('soulchat_posts_today', messagesSentToday.toString()); // Removed for unlimited chats
             });
 
             messageInput.addEventListener('keypress', (e) => { 
@@ -839,6 +900,18 @@
                     e.preventDefault(); 
                     sendButton.click(); 
                 }
+            });
+
+            // --- Emoji Button Logic (Placeholder) ---
+            emojiButton.addEventListener('click', () => {
+                // In a real application, you would open an emoji picker here.
+                // For this example, we'll just insert a default emoji.
+                const currentText = messageInput.value;
+                messageInput.value = currentText + '😊';
+                adjustTextareaHeight();
+                messageInput.focus(); // Keep focus on the textarea
+                setTypingStatus(true); // Indicate typing after inserting emoji
+                debouncedClearTypingStatus(); // Reset debounce for typing status
             });
 
             // --- Auto-adjust textarea height ---
@@ -880,22 +953,6 @@
                 dailyReflectionModal.classList.remove('active'); 
             });
 
-            // --- Payment Prompt Modal ---
-            // This function is no longer needed but kept for reference if needed later
-            // function showPaymentModal() {
-            //     paymentModal.classList.add('active');
-            // }
-
-            // Removed payment modal event listeners
-            // closePaymentModalButton.addEventListener('click', () => { 
-            //     paymentModal.classList.remove('active'); 
-            // });
-
-            // premiumButton.addEventListener('click', () => { 
-            //     alert("Redirecting to premium subscription page! (Placeholder)"); 
-            //     paymentModal.classList.remove('active'); 
-            // });
-
             // --- Theme Switcher Logic ---
             currentThemeIndex = themeNamesOrder.indexOf(currentRoomMood); 
             if (currentThemeIndex === -1) { 
@@ -912,7 +969,6 @@
 
 
             // Initial calls
-            // checkDailyPostLimit(); // Removed for unlimited chats
             adjustTextareaHeight(); 
             showDailyReflectionModal(); 
         });
