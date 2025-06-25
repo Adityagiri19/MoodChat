@@ -5,22 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SoulChat - Your Safe Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght[*400;500;600;700*]&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Custom CSS variables for a Discord-like theme */
+        /* Custom CSS variables for themes */
         :root {
-            --discord-bg-primary: #36393f; /* Dark Grey */
-            --discord-bg-secondary: #2f3136; /* Darker Grey */
-            --discord-bg-tertiary: #202225; /* Even Darker Grey */
-            --discord-text-primary: #dcddde; /* Light Grey */
-            --discord-text-secondary: #72767d; /* Muted Grey */
-            --discord-accent-blue: #5865f2; /* Discord Blue */
-            --discord-accent-green: #3ba55c; /* Discord Green (online status) */
-            --discord-red: #ed4245; /* Error/Danger */
-            --discord-border-color: #26282b; /* Subtle border */
-            --discord-message-bg: #32353b; /* Message bubble background */
+            /* Light Theme Defaults */
+            --bg-primary: #f0f2f5; /* Light Grey Background */
+            --bg-secondary: #ffffff; /* White Card/Container Background */
+            --bg-tertiary: #e9ecef; /* Light Input/Muted Background */
+            --text-primary: #343a40; /* Dark Grey Text */
+            --text-secondary: #6c757d; /* Muted Grey Text */
+            --accent-color: #5a67d8; /* A nice blue accent (similar to original Discord blue) */
+            --accent-green: #3ba55c; /* Online status */
+            --red-color: #ed4245; /* Error/Danger */
+            --border-color: #dee2e6; /* Light border */
+            --message-bg: #e0e2e5; /* Light message bubble background */
+            --sent-message-bg: #d4e0ff; /* Light blue for sent messages */
+            --box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+            --modal-overlay-bg: rgba(0, 0, 0, 0.5); /* Semi-transparent black for modal */
+            --modal-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Lighter modal shadow */
+
+            /* Background specific variables (default light) */
+            --mood-bg-start: #f0f2f5;
+            --mood-bg-end: #e0e2e5;
+        }
+
+        body.dark-theme {
+            /* Dark Theme Overrides (Discord-like) */
+            --bg-primary: #36393f; /* Dark Grey */
+            --bg-secondary: #2f3136; /* Darker Grey */
+            --bg-tertiary: #202225; /* Even Darker Grey */
+            --text-primary: #dcddde; /* Light Grey */
+            --text-secondary: #72767d; /* Muted Grey */
+            --accent-color: #5865f2; /* Discord Blue */
+            --accent-green: #3ba55c; /* Discord Green (online status) */
+            --red-color: #ed4245; /* Error/Danger */
+            --border-color: #26282b; /* Subtle border */
+            --message-bg: #32353b; /* Message bubble background */
             --sent-message-bg: #4f545c; /* Darker grey for sent messages */
+            --box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Deeper shadow for app feel */
+            --modal-overlay-bg: rgba(0, 0, 0, 0.7); /* Darker, more opaque overlay */
+            --modal-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Stronger, darker shadow */
+            
+            /* Background specific variables (dark theme) */
+            --mood-bg-start: #36393f;
+            --mood-bg-end: #2f3136;
         }
 
         /* Base styles */
@@ -32,117 +62,183 @@
         }
 
         body {
-            font-family: 'Inter', 'Poppins', sans-serif; /* Prioritize Inter, fallback to Poppins */
-            background: var(--discord-bg-primary);
+            font-family: 'Inter', 'Poppins', sans-serif;
+            background: var(--bg-primary); /* Base background for safety */
             display: flex;
             flex-direction: column;
             height: 100%;
-            color: var(--discord-text-primary);
-            transition: background 0.3s ease-in-out;
+            color: var(--text-primary);
+            transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+            position: relative; /* Needed for absolute positioning of background effects */
         }
 
-        /* Chat container - Mimicking Discord's main content area */
+        /* --- Mood-based Dynamic Backgrounds --- */
+        #mood-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind chat container */
+            pointer-events: none; /* Do not interfere with mouse events */
+            opacity: 0.8; /* Subtle transparency */
+            transition: background 0.8s ease-in-out, opacity 0.5s ease-in-out;
+            background-size: 400% 400%; /* For gradient animations */
+        }
+
+        /* JOY ROOM BACKGROUND */
+        body.theme-Joy #mood-background {
+            /* Using a combination of vibrant yellows and oranges */
+            background: linear-gradient(135deg, #FFD700, #FFEA00, #FFA500, #FFD700);
+            animation: joyfulGradient 15s ease infinite alternate;
+            opacity: 0.6; /* Slightly more vibrant */
+        }
+        @keyframes joyfulGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* SADNESS ROOM BACKGROUND */
+        body.theme-Sadness #mood-background {
+            /* Deep, cool blues and greys */
+            background: linear-gradient(180deg, #34495e, #2c3e50, #1a2b3c);
+            animation: melancholyWave 20s ease-in-out infinite;
+            opacity: 0.7; /* Subtly opaque */
+        }
+        @keyframes melancholyWave {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5%); }
+            100% { transform: translateY(0); }
+        }
+        
+        /* COMFORT ROOM BACKGROUND */
+        body.theme-Comfort #mood-background {
+            /* Warm, inviting greens and muted yellows */
+            background: linear-gradient(90deg, #8bc34a, #aed581, #c5e1a5);
+            animation: comfortPulse 18s ease infinite alternate;
+            opacity: 0.5; /* More gentle */
+        }
+        @keyframes comfortPulse {
+            0% { background-size: 400% 400%; background-position: 0% 50%; }
+            50% { background-size: 420% 420%; background-position: 100% 50%; }
+            100% { background-size: 400% 400%; background-position: 0% 50%; }
+        }
+
+        /* Default/Fallback background */
+        body:not([class*="theme-"]) #mood-background {
+            background: linear-gradient(45deg, var(--mood-bg-start), var(--mood-bg-end));
+            opacity: 0.8;
+        }
+
+        /* Ensure chat container is above the mood background */
         .chat-container {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            max-width: 900px; /* Slightly wider for chat content */
+            max-width: 900px;
             width: 98%;
             margin: 0 auto;
-            background-color: var(--discord-bg-secondary);
-            border-radius: 0.5rem; /* Less rounded, more app-like */
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Deeper shadow for app feel */
-            position: relative;
-            z-index: 10;
-            height: 96%; /* Occupy most of the height */
-            margin-top: 2%; /* Center vertically */
+            background-color: var(--bg-secondary);
+            border-radius: 0.5rem;
+            box-shadow: var(--box-shadow);
+            position: relative; /* Positioned above mood-background */
+            z-index: 10; 
+            height: 96%;
+            margin-top: 2%;
             margin-bottom: 2%;
             overflow: hidden;
+            background-color: var(--bg-secondary); /* Ensure it uses secondary background */
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
 
-        /* Top Bar - Discord Channel Header */
+        /* Top Bar */
         .top-bar {
-            background-color: var(--discord-bg-secondary);
-            border-bottom: 1px solid var(--discord-border-color);
-            color: var(--discord-text-primary);
-            padding: 0.75rem 1rem; /* Adjusted padding */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Lighter shadow for top bar */
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
         .top-bar .text-xl {
-            font-weight: 600; /* Semibold for channel name */
+            font-weight: 600;
         }
         .top-bar .text-gray-500 {
-            color: var(--discord-text-secondary); /* Muted secondary text */
+            color: var(--text-secondary);
             font-size: 0.8rem;
         }
         .top-bar button, .top-bar a {
             background-color: transparent;
-            color: var(--discord-text-secondary);
-            transition: color 0.2s ease;
-            padding: 0.3rem; /* Smaller hit area for icons */
+            color: var(--text-secondary);
+            transition: color 0.2s ease, background-color 0.2s ease;
+            padding: 0.3rem;
             border-radius: 0.25rem;
         }
         .top-bar button:hover, .top-bar a:hover {
-            color: var(--discord-text-primary);
-            background-color: rgba(255, 255, 255, 0.08); /* Subtle hover effect */
+            color: var(--text-primary);
+            background-color: rgba(0, 0, 0, 0.08); /* Adjusted for light/dark safety */
+        }
+        body.dark-theme .top-bar button:hover, body.dark-theme .top-bar a:hover {
+            background-color: rgba(255, 255, 255, 0.08);
         }
 
-        /* Chat messages area - Discord message list */
+        /* Chat messages area */
         .chat-messages {
             flex-grow: 1;
-            padding: 1rem; /* Slightly reduced padding */
+            padding: 1rem;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem; /* Tighter spacing between messages */
+            gap: 0.5rem;
             scroll-behavior: smooth;
             min-height: 0;
-            background-color: var(--discord-bg-secondary); /* Ensure background is consistent */
+            background-color: var(--bg-secondary); /* Ensure it uses secondary background */
+            transition: background-color 0.3s ease-in-out;
         }
 
-        /* Message bubble base - Discord message layout */
+        /* Message bubble base */
         .message-bubble {
-            max-width: 95%; /* Wider, more edge-to-edge messages */
-            padding: 0.6rem 0.8rem; /* Compact padding */
-            border-radius: 0.375rem; /* Slightly rounded corners */
-            box-shadow: none; /* Discord messages don't typically have shadows */
+            max-width: 95%;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.375rem;
+            box-shadow: none;
             line-height: 1.4;
             position: relative;
-            transition: background-color 0.1s ease-out; /* Smooth hover */
+            transition: background-color 0.1s ease-out;
             animation: fadeIn 0.3s ease-out;
             word-wrap: break-word;
-            color: var(--discord-text-primary);
-            background-color: transparent; /* Default transparent */
+            color: var(--text-primary);
+            background-color: transparent;
         }
 
         .message-bubble:hover {
-            background-color: var(--discord-message-bg); /* Highlight on hover */
+            background-color: var(--message-bg);
         }
 
-        /* Fade-in animation for messages */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .message-bubble.received {
-            align-self: flex-start; /* Messages start from the left */
-            margin-right: auto; /* Push content to left */
-            border-radius: 0.375rem; /* Uniform rounding */
-            background-color: var(--discord-message-bg); /* Default background for received */
+            align-self: flex-start;
+            margin-right: auto;
+            border-radius: 0.375rem;
+            background-color: var(--message-bg);
         }
         .message-bubble.sent {
-            align-self: flex-end; /* Push sent messages to the right */
-            margin-left: auto; /* Push content to right */
-            border-radius: 0.375rem; /* Uniform rounding */
-            background-color: var(--sent-message-bg); /* Distinct background for sent */
+            align-self: flex-end;
+            margin-left: auto;
+            border-radius: 0.375rem;
+            background-color: var(--sent-message-bg);
         }
 
         .message-bubble .sender-info {
-            font-size: 0.875rem; /* Standard font size */
-            font-weight: 500; /* Medium weight for names */
-            color: var(--discord-accent-blue); /* Distinct color for sender names */
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--accent-color);
             margin-bottom: 0.2rem;
             display: flex;
             align-items: center;
@@ -150,57 +246,63 @@
         }
         .message-bubble .sender-info .timestamp {
             font-size: 0.75rem;
-            color: var(--discord-text-secondary);
+            color: var(--text-secondary);
             font-weight: 400;
             margin-left: 0.5rem;
         }
         .message-bubble p {
-            color: var(--discord-text-primary);
+            color: var(--text-primary);
             margin-top: 0.2rem;
         }
 
         /* Reply specific styling */
         .message-bubble .reply-preview {
-            background-color: rgba(0, 0, 0, 0.2); /* Darker background for reply */
-            border-left: 4px solid var(--discord-text-secondary); /* Grey border */
+            background-color: rgba(0, 0, 0, 0.1); /* Adjusted for light theme */
+            border-left: 4px solid var(--text-secondary);
             padding: 0.4rem 0.75rem;
             border-radius: 0.3rem;
             margin-bottom: 0.4rem;
-            margin-top: 0.2rem; /* Space from sender info */
+            margin-top: 0.2rem;
         }
+        body.dark-theme .message-bubble .reply-preview {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
         .message-bubble .reply-preview .reply-sender {
             font-weight: 600;
             font-size: 0.8rem;
-            color: var(--discord-accent-blue);
+            color: var(--accent-color);
             opacity: 0.9;
         }
         .message-bubble .reply-preview .reply-text {
             font-size: 0.8rem;
-            color: var(--discord-text-primary);
+            color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* Message input area - Discord message bar */
+        /* Message input area */
         .message-input-area {
-            padding: 0.75rem 1rem; /* Consistent padding */
-            background-color: var(--discord-bg-secondary);
-            border-top: 1px solid var(--discord-border-color);
+            padding: 0.75rem 1rem;
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
             border-bottom-left-radius: 0.5rem;
             border-bottom-right-radius: 0.5rem;
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
 
         .reply-input-preview {
-            background-color: var(--discord-bg-tertiary); /* Darker background for reply input preview */
+            background-color: var(--bg-tertiary);
             border-radius: 0.5rem;
             padding: 0.6rem 0.8rem;
             margin-bottom: 0.6rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4px solid var(--discord-accent-blue); /* Discord blue border */
+            border-left: 4px solid var(--accent-color);
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
         .reply-input-preview .reply-text-content {
             flex-grow: 1;
@@ -209,12 +311,12 @@
         .reply-input-preview .reply-sender {
             font-weight: 600;
             font-size: 0.85rem;
-            color: var(--discord-accent-blue);
+            color: var(--accent-color);
             margin-bottom: 0.1rem;
         }
         .reply-input-preview .reply-message-text {
             font-size: 0.8rem;
-            color: var(--discord-text-primary);
+            color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -222,56 +324,52 @@
         .reply-input-preview .cancel-reply-btn {
             background: none;
             border: none;
-            color: var(--discord-text-secondary);
+            color: var(--text-secondary);
             font-size: 1rem;
             cursor: pointer;
             transition: color 0.2s ease;
         }
         .reply-input-preview .cancel-reply-btn:hover {
-            color: var(--discord-text-primary);
+            color: var(--text-primary);
         }
 
-
         .message-input {
-            border-radius: 0.5rem; /* Less rounded input */
+            border-radius: 0.5rem;
             padding: 0.7rem 1rem;
-            background-color: var(--discord-bg-tertiary); /* Dark input background */
-            border: 1px solid var(--discord-border-color);
-            color: var(--discord-text-primary);
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
             resize: none;
             height: auto;
-            min-height: 2.5rem; /* Slightly shorter min-height */
-            max-height: 8rem; /* Max height */
+            min-height: 2.5rem;
+            max-height: 8rem;
             overflow-y: auto;
-            box-shadow: none; /* No inner shadow */
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
         }
         .message-input:focus {
             outline: none;
-            border-color: var(--discord-accent-blue); /* Discord blue on focus */
-            box-shadow: 0 0 0 1px var(--discord-accent-blue); /* Subtle outline */
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 1px var(--accent-color);
         }
         /* --- START: Added CSS to hide scrollbar arrows --- */
-        /* Hide scrollbar for Chrome, Safari and Opera */
         .message-input::-webkit-scrollbar {
             display: none;
         }
 
-        /* Hide scrollbar for IE, Edge and Firefox */
         .message-input {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         /* --- END: Added CSS to hide scrollbar arrows --- */
 
-
         .send-button {
-            background-color: var(--discord-accent-blue);
+            background-color: var(--accent-color);
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
             box-shadow: none;
             color: white;
-            border-radius: 0.5rem; /* Match input field */
-            width: 2.5rem; /* Smaller button */
+            border-radius: 0.5rem;
+            width: 2.5rem;
             height: 2.5rem;
             display: flex;
             align-items: center;
@@ -279,7 +377,7 @@
         }
 
         .send-button:hover {
-            background-color: color-mix(in srgb, var(--discord-accent-blue) 85%, black 15%); /* Darken on hover */
+            background-color: color-mix(in srgb, var(--accent-color) 85%, black 15%);
             box-shadow: none;
         }
 
@@ -288,16 +386,22 @@
             box-shadow: none;
         }
 
-        /* Floating heart animation on send (adjusted for Discord feel) */
+        /* Floating heart animation on send */
         .floating-heart-send {
             position: absolute;
-            font-size: 1.8rem; /* Smaller heart */
-            color: var(--discord-accent-blue); /* Discord blue heart */
+            font-size: 1.8rem;
+            color: var(--accent-color);
             opacity: 0;
             animation: float-send 1s ease-out forwards;
             pointer-events: none;
             z-index: 50;
-            text-shadow: 0 0 5px rgba(88, 101, 242, 0.5); /* Blue glow */
+            text-shadow: 0 0 5px rgba(88, 101, 242, 0.5);
+        }
+        body.dark-theme .floating-heart-send {
+            text-shadow: 0 0 5px rgba(88, 101, 242, 0.5); /* Discord blue glow */
+        }
+        body.light-theme .floating-heart-send {
+            text-shadow: 0 0 5px rgba(90, 103, 216, 0.5); /* Lighter blue glow */
         }
 
         @keyframes float-send {
@@ -307,14 +411,14 @@
             100% { transform: translateY(-100px) translateX(25px) scale(1.2); opacity: 0; }
         }
 
-        /* Daily reflection modal - Discord modal style */
+        /* Daily reflection modal */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Darker, more opaque overlay */
+            background-color: var(--modal-overlay-bg);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -330,17 +434,17 @@
         }
 
         .modal-content {
-            background-color: var(--discord-bg-secondary); /* Dark background */
+            background-color: var(--bg-secondary);
             padding: 2rem;
-            border-radius: 0.5rem; /* Less rounded */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Stronger, darker shadow */
+            border-radius: 0.5rem;
+            box-shadow: var(--modal-shadow);
             max-width: 90%;
-            width: 400px; /* Standard width */
+            width: 400px;
             text-align: center;
             transform: translateY(-20px);
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
             opacity: 0;
-            border: 1px solid var(--discord-border-color); /* Subtle border */
+            border: 1px solid var(--border-color);
         }
         .modal-overlay.active .modal-content {
             transform: translateY(0);
@@ -348,40 +452,40 @@
         }
         
         .modal-content h3 {
-            color: var(--discord-text-primary);
+            color: var(--text-primary);
             font-weight: 700;
             font-size: 1.8rem;
         }
         .modal-content p {
-            color: var(--discord-text-secondary);
+            color: var(--text-secondary);
             font-size: 1rem;
             margin-bottom: 1.5rem;
         }
         .modal-content button {
             padding: 0.7rem 1.5rem;
-            border-radius: 0.3rem; /* Less rounded buttons */
+            border-radius: 0.3rem;
             font-weight: 500;
             box-shadow: none;
             transition: background-color 0.2s ease, transform 0.1s ease;
         }
         #close-reflection-modal-button {
-            background-color: var(--discord-accent-blue);
+            background-color: var(--accent-color);
             color: white;
         }
         #close-reflection-modal-button:hover {
-            background-color: color-mix(in srgb, var(--discord-accent-blue) 85%, black 15%);
+            background-color: color-mix(in srgb, var(--accent-color) 85%, black 15%);
             transform: translateY(-1px);
         }
 
         /* Typing indicator styling */
         .typing-indicator {
             font-style: italic;
-            color: var(--discord-text-secondary);
-            padding-left: 1rem; /* Match chat padding */
+            color: var(--text-secondary);
+            padding-left: 1rem;
             height: 1.5rem;
             line-height: 1.5rem;
             overflow: hidden;
-            transition: opacity 0.2s ease-in-out;
+            transition: opacity 0.2s ease-in-out, color 0.3s ease-in-out;
             opacity: 0;
             font-size: 0.85rem;
         }
@@ -391,26 +495,12 @@
         
         /* Post limit display (not present in HTML, but for consistency if added) */
         #post-limit-display {
-            color: var(--discord-text-secondary);
+            color: var(--text-secondary);
             font-size: 0.8rem;
         }
         .flex-grow.border-b {
-            border-color: var(--discord-border-color);
+            border-color: var(--border-color);
         }
-
-        /* Mood-specific themes (Keeping for functionality, but visual changes minimal with Discord theme) */
-        /* These will still apply the body class, but the visual variables are now Discord-centric */
-        body.theme-Comfort {
-            /* Discord doesn't have strong mood themes, so these will primarily adjust base colors slightly */
-            --discord-accent-blue: #6aa84f; /* Slightly more green-blue for comfort */
-        }
-        body.theme-Joy {
-            --discord-accent-blue: #f1c40f; /* Yellowish for joy */
-        }
-        body.theme.Sadness {
-            --discord-accent-blue: #95a5a6; /* Desaturated blue-grey for sadness */
-        }
-
 
         /* Mobile specific adjustments */
         @media (max-width: 767px) {
@@ -432,7 +522,7 @@
                 border-radius: 0;
             }
             .message-bubble {
-                max-width: 100%; /* Full width on mobile */
+                max-width: 100%;
                 padding: 0.5rem 0.75rem;
             }
             .modal-content {
@@ -444,8 +534,7 @@
     </style>
 </head>
 <body>
-
-    <div id="daily-reflection-modal" class="modal-overlay">
+    <div id="mood-background"></div> <div id="daily-reflection-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 class="text-2xl font-bold mb-4">Hello Soul,</h3>
             <p class="text-lg mb-6">What are you feeling today? Share your heart.</p>
@@ -459,7 +548,9 @@
                 <h2 id="room-name" class="text-xl font-semibold"></h2>
             </div>
             <div class="flex items-center gap-4">
-                <!-- Removed the "X people here" text as requested -->
+                <button id="theme-toggle" class="hover:text-gray-200 transition-colors" title="Toggle Theme">
+                    <i class="fas fa-moon text-xl" id="theme-icon"></i>
+                </button>
                 <a href="index.html" class="hover:text-gray-200 transition-colors" title="Go Home">
                     <i class="fas fa-home text-xl"></i>
                 </a>
@@ -516,22 +607,19 @@
                     class="message-input flex-grow"
                     rows="1"
                 ></textarea>
-                <button id="send-button" class="send-button text-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-discord-accent-blue">
-                    <i class="fas fa-arrow-up"></i>
+                <button id="send-button" class="send-button text-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-color">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
     </div>
 
     <script type="module">
-        // Firebase Imports
+        // Firebase Imports (unchanged)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, deleteDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
-
-        // --- GLOBAL DECLARATIONS FOR THEME LOGIC ---
-        // Removed themeNamesOrder, visualThemes, currentThemeIndex, currentThemeName as theme changer is removed.
 
         // --- GLOBAL DECLARATIONS for Typing Indicator ---
         let typingTimeout; 
@@ -544,18 +632,18 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const roomNameElement = document.getElementById('room-name'); 
-            // Removed roomIconElement as it's no longer needed
             const chatMessages = document.getElementById('chat-messages'); 
             const messageInput = document.getElementById('message-input'); 
             const sendButton = document.getElementById('send-button'); 
             const typingIndicatorElement = document.getElementById('typing-indicator'); 
-            const messageInputArea = document.getElementById('message-input-area'); // New: Get the input area itself
+            const messageInputArea = document.getElementById('message-input-area'); 
             
             const dailyReflectionModal = document.getElementById('daily-reflection-modal'); 
             const closeReflectionModalButton = document.getElementById('close-reflection-modal-button'); 
             
-            // themeSwitcherButton removed
-            const activeUsersElement = document.getElementById('active-users'); 
+            // Theme Toggle elements
+            const themeToggleButton = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
 
             // Reply UI elements
             const replyInputPreview = document.getElementById('reply-input-preview');
@@ -573,7 +661,7 @@
             let userId; // Current user's anonymous ID
             let analytics; // Analytics instance
 
-            // --- Firebase Initialization ---
+            // --- Firebase Initialization (unchanged) ---
             const firebaseConfig = {
               apiKey: "AIzaSyAIerQSDRGPsULxT-24e1kJnPN3bOD5lFo", 
               authDomain: "soulchat-app.firebaseapp.com", 
@@ -607,7 +695,6 @@
                         cleanOldMessages(); 
                         setInterval(cleanOldMessages, 30 * 60 * 1000); 
                         
-                        // --- New: Request notification permission after auth ---
                         await requestNotificationPermission();
 
                     } else {
@@ -623,33 +710,60 @@
             }
 
 
-            // --- URL Parameter Parsing ---
+            // --- URL Parameter Parsing (unchanged) ---
             const urlParams = new URLSearchParams(window.location.search); 
             currentNickname = urlParams.get('nickname') || 'AnonymousSoul'; 
             currentRoomMood = urlParams.get('mood') || 'Comfort'; 
             currentGenderSymbol = urlParams.get('genderSymbol') || ''; 
 
-            // --- Moods for Room (Fixed once entered) ---
-            // Removed icon property from roomMoods as it's no longer needed
+            // --- Moods for Room (Fixed once entered) (unchanged) ---
             const roomMoods = {
                 "Comfort": {}, 
                 "Joy": {}, 
                 "Sadness": {} 
             };
 
-            // Simplified theme application - always use currentRoomMood for body class
+            // Apply initial mood theme class to body
             document.body.classList.add(`theme-${currentRoomMood}`);
 
 
             const initialRoomInfo = roomMoods[currentRoomMood]; 
-            roomNameElement.textContent = "# " + currentRoomMood.toLowerCase() + " Room"; /* Added # and lowercase */
-            messageInput.placeholder = `Message #${currentRoomMood.toLowerCase()}`; /* Update placeholder */
-            // Removed roomIconElement.textContent assignment
+            roomNameElement.textContent = "# " + currentRoomMood.toLowerCase() + " Room";
+            messageInput.placeholder = `Message #${currentRoomMood.toLowerCase()}`;
 
 
-            // activeUsersElement.textContent = '...'; // This line is no longer necessary as the element is removed.
+            // --- Theme Toggling Logic ---
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.body.classList.add(savedTheme);
+                if (savedTheme === 'dark-theme') {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                }
+            } else {
+                // Default to light theme if no preference saved
+                document.body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light-theme');
+            }
 
-            // --- Message Sending Functionality ---
+            themeToggleButton.addEventListener('click', () => {
+                if (document.body.classList.contains('light-theme')) {
+                    document.body.classList.remove('light-theme');
+                    document.body.classList.add('dark-theme');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'dark-theme');
+                } else {
+                    document.body.classList.remove('dark-theme');
+                    document.body.classList.add('light-theme');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light-theme');
+                }
+            });
+
+
+            // --- Message Sending Functionality (unchanged) ---
             async function sendMessage() {
                 const messageText = messageInput.value.trim(); 
                 if (messageText === '') return; 
@@ -671,17 +785,15 @@
                         localId: localMessageId 
                     };
 
-                    // Add reply information if in reply mode
                     if (replyingToMessage) {
                         messageData.repliedToMessage = {
                             docId: replyingToMessage.docId,
                             nickname: replyingToMessage.nickname,
                             text: replyingToMessage.text
                         };
-                        cancelReply(); // Clear reply mode after sending
+                        cancelReply();
                     }
 
-                    // Optimistically display message
                     displayMessage(messageData, localMessageId, true); 
 
                     messageInput.value = ''; 
@@ -689,7 +801,6 @@
                     
                     setTypingStatus(false); 
 
-                    // Add message to Firestore
                     await addDoc(collection(db, `chat_rooms/${currentRoomMood}/messages`), {
                         ...messageData,
                         timestamp: serverTimestamp() 
@@ -700,7 +811,7 @@
                 }
             }
 
-            // --- Real-time Chat Setup (Firestore Listener) ---
+            // --- Real-time Chat Setup (Firestore Listener) (unchanged) ---
             function setupRealtimeChat() {
                 chatMessages.innerHTML = ''; 
 
@@ -742,7 +853,7 @@
                 });
             }
 
-            // --- Display Message Function (Modified for consistency and optimistic flag) ---
+            // --- Display Message Function (Modified only for notification logic) ---
             function displayMessage(message, id, isOptimistic = false) {
                 if (document.querySelector(`.message-bubble[data-doc-id="${id}"]`) && !isOptimistic) { 
                     console.log("Skipping display of duplicate real message:", id); 
@@ -756,7 +867,6 @@
                     messageBubble.setAttribute('data-local-id', id); 
                 } else {
                     messageBubble.setAttribute('data-doc-id', id); 
-                    // Add click listener for reply
                     messageBubble.addEventListener('click', () => {
                         setReplyMode(id, message.nickname, message.text);
                     });
@@ -764,27 +874,21 @@
 
                 const isSentByCurrentUser = message.userId === userId; 
 
-                // Apply 'sent' or 'received' class for alignment and distinct background
                 if (isSentByCurrentUser) { 
                     messageBubble.classList.add('sent'); 
                 } else {
                     messageBubble.classList.add('received'); 
                     
-                    // --- New: Notification Logic for Received Messages ---
-                    // Only show notification if permission is granted and it's not our own message
                     if (Notification.permission === 'granted' && !isOptimistic) {
                         const notificationTitle = `New message from ${message.genderSymbol ? message.genderSymbol + ' ' : ''}${message.nickname} in #${currentRoomMood.toLowerCase()} room`;
                         const notificationOptions = {
                             body: message.text,
-                            // You can replace this with your app's actual icon if you have one
                             icon: 'https://placehold.co/48x48/5865f2/ffffff?text=SC' 
-                            // tag: `chat-${message.nickname}` // Uncomment to prevent multiple notifications from the same sender
                         };
 
                         try {
                             const notification = new Notification(notificationTitle, notificationOptions);
 
-                            // Optional: Handle notification clicks (e.g., focus the tab)
                             notification.onclick = function() {
                                 window.focus();
                                 this.close();
@@ -793,7 +897,6 @@
                             console.error("Error showing notification:", error);
                         }
                     }
-                    // --- End Notification Logic ---
                 }
 
                 const senderInfo = `${message.genderSymbol ? message.genderSymbol + ' ' : ''}${message.nickname}`; 
@@ -824,7 +927,7 @@
                 setTimeout(() => messageBubble.classList.remove('opacity-0'), 10); 
             }
 
-            // --- New: Function to request notification permission ---
+            // --- New: Function to request notification permission (unchanged) ---
             async function requestNotificationPermission() {
                 if (!('Notification' in window)) {
                     console.warn("This browser does not support desktop notification.");
@@ -842,15 +945,13 @@
             }
 
 
-            // --- Reply Mode Functions ---
+            // --- Reply Mode Functions (unchanged) ---
             function setReplyMode(docId, nickname, text) {
                 replyingToMessage = { docId, nickname, text };
                 replyPreviewSender.textContent = nickname;
                 replyPreviewText.textContent = text;
                 replyInputPreview.classList.remove('hidden');
                 messageInput.focus();
-                // Ensure the input area is visible after setting reply mode
-                // This is crucial for mobile keyboards
                 messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
             }
 
@@ -863,7 +964,7 @@
 
             cancelReplyBtn.addEventListener('click', cancelReply);
 
-            // --- Typing Indicator Logic ---
+            // --- Typing Indicator Logic (unchanged) ---
             async function setTypingStatus(isTyping) {
                 if (!userId || !db || !currentRoomMood) return; 
 
@@ -877,7 +978,6 @@
                             timestamp: serverTimestamp() 
                         });
                     } else {
-                        // Delete the document when not typing
                         await deleteDoc(typingDocRef); 
                     }
                 } catch (e) {
@@ -885,7 +985,6 @@
                 }
             }
 
-            // Debounce function for typing status updates
             const debounce = (func, delay) => { 
                 let timeout; 
                 return function(...args) { 
@@ -895,7 +994,6 @@
                 };
             };
 
-            // This debounce is for *clearing* the typing status after a pause
             const debouncedClearTypingStatus = debounce(() => setTypingStatus(false), TYPING_TIMEOUT_MS); 
 
             messageInput.addEventListener('input', () => { 
@@ -904,24 +1002,18 @@
                 debouncedClearTypingStatus(); 
             });
             
-            // Listen for blur event to clear typing status if user leaves input field
             messageInput.addEventListener('blur', () => { 
                 setTypingStatus(false); 
                 clearTimeout(debouncedClearTypingStatus); 
             });
 
-            // --- New: Scroll input into view on focus ---
-            // This event listener will ensure the input area is scrolled into view when focused,
-            // which helps with virtual keyboards on mobile devices.
             messageInput.addEventListener('focus', () => {
-                // Use a slight delay to ensure virtual keyboard has time to appear
                 setTimeout(() => {
                     messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 }, 100); 
             });
 
 
-            // Listen for typing indicators from others
             function setupTypingIndicatorListener() {
                 if (!db || !currentRoomMood) return; 
 
@@ -949,7 +1041,7 @@
                 });
             }
 
-            // --- Message Cleanup Logic ---
+            // --- Message Cleanup Logic (unchanged) ---
             async function cleanOldMessages() {
                 if (!db || !currentRoomMood) { 
                     console.warn("Firestore not initialized or room mood not set for cleanup."); 
@@ -995,13 +1087,13 @@
                 }
             });
 
-            // --- Auto-adjust textarea height ---
+            // --- Auto-adjust textarea height (unchanged) ---
             function adjustTextareaHeight() {
                 messageInput.style.height = 'auto'; 
                 messageInput.style.height = messageInput.scrollHeight + 'px'; 
             }
 
-            // --- Auto-scroll to bottom, but pause on user scroll up ---
+            // --- Auto-scroll to bottom, but pause on user scroll up (unchanged) ---
             let isUserScrolling = false; 
             let scrollTimeout; 
 
@@ -1019,7 +1111,7 @@
                 }
             }
 
-            // --- Daily Reflection Modal ---
+            // --- Daily Reflection Modal (unchanged) ---
             function showDailyReflectionModal() {
                 const lastModalDate = localStorage.getItem('soulchat_last_modal_date'); 
                 const today = new Date().toDateString(); 
