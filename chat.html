@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoodChat - Your Safe Space</title>
+    <title>SoulChat - Your Safe Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -459,7 +459,7 @@
                 <h2 id="room-name" class="text-xl font-semibold"></h2>
             </div>
             <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-500 hidden sm:block"><span id="active-users">0</span> people here</span>
+                <!-- Removed the "X people here" text as requested -->
                 <a href="index.html" class="hover:text-gray-200 transition-colors" title="Go Home">
                     <i class="fas fa-home text-xl"></i>
                 </a>
@@ -598,7 +598,7 @@
                     await signInAnonymously(auth); 
                 }
 
-                onAuthStateChanged(auth, (user) => { 
+                onAuthStateChanged(auth, async (user) => { 
                     if (user) { 
                         userId = user.uid; 
                         console.log("Firebase Authenticated! User ID:", userId); 
@@ -606,6 +606,10 @@
                         setupTypingIndicatorListener(); 
                         cleanOldMessages(); 
                         setInterval(cleanOldMessages, 30 * 60 * 1000); 
+                        
+                        // --- New: Request notification permission after auth ---
+                        await requestNotificationPermission();
+
                     } else {
                         console.warn("No user signed in. Real-time chat features may be limited."); 
                     }
@@ -643,7 +647,7 @@
             // Removed roomIconElement.textContent assignment
 
 
-            activeUsersElement.textContent = '...'; 
+            // activeUsersElement.textContent = '...'; // This line is no longer necessary as the element is removed.
 
             // --- Message Sending Functionality ---
             async function sendMessage() {
@@ -734,7 +738,7 @@
                     scrollToBottom(); 
                 }, (error) => {
                     console.error("Error listening to messages:", error); 
-                    chatMessages.innerHTML = `<div class="text-center text-red-500 mt-8">Error loading messages. Check your Firebase rules and connection.</div>`; 
+                    chatMessages.innerHTML = `<div class="text-center text-red-500 mt-8">Failed to load chat. Please try again later. (Check console for details).</div>`; 
                 });
             }
 
@@ -765,6 +769,31 @@
                     messageBubble.classList.add('sent'); 
                 } else {
                     messageBubble.classList.add('received'); 
+                    
+                    // --- New: Notification Logic for Received Messages ---
+                    // Only show notification if permission is granted and it's not our own message
+                    if (Notification.permission === 'granted' && !isOptimistic) {
+                        const notificationTitle = `New message from ${message.genderSymbol ? message.genderSymbol + ' ' : ''}${message.nickname} in #${currentRoomMood.toLowerCase()} room`;
+                        const notificationOptions = {
+                            body: message.text,
+                            // You can replace this with your app's actual icon if you have one
+                            icon: 'https://placehold.co/48x48/5865f2/ffffff?text=SC' 
+                            // tag: `chat-${message.nickname}` // Uncomment to prevent multiple notifications from the same sender
+                        };
+
+                        try {
+                            const notification = new Notification(notificationTitle, notificationOptions);
+
+                            // Optional: Handle notification clicks (e.g., focus the tab)
+                            notification.onclick = function() {
+                                window.focus();
+                                this.close();
+                            };
+                        } catch (error) {
+                            console.error("Error showing notification:", error);
+                        }
+                    }
+                    // --- End Notification Logic ---
                 }
 
                 const senderInfo = `${message.genderSymbol ? message.genderSymbol + ' ' : ''}${message.nickname}`; 
@@ -794,6 +823,24 @@
                 chatMessages.appendChild(messageBubble); 
                 setTimeout(() => messageBubble.classList.remove('opacity-0'), 10); 
             }
+
+            // --- New: Function to request notification permission ---
+            async function requestNotificationPermission() {
+                if (!('Notification' in window)) {
+                    console.warn("This browser does not support desktop notification.");
+                    return;
+                }
+
+                if (Notification.permission === 'default') {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted.');
+                    } else {
+                        console.warn('Notification permission denied.');
+                    }
+                }
+            }
+
 
             // --- Reply Mode Functions ---
             function setReplyMode(docId, nickname, text) {
