@@ -1096,10 +1096,12 @@
                 clearTimeout(debouncedClearTypingStatus); 
             });
 
-            messageInput.addEventListener('focus', () => {
+           messageInput.addEventListener('focus', () => {
+                // Introduce a slightly longer delay to allow the keyboard to fully appear
+                // before attempting to scroll the input into view.
                 setTimeout(() => {
                     messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }, 100); 
+                }, 200); // Increased from 100ms to 200ms for better consistency
             });
 
 
