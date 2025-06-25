@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoodChat - Your Safe Space</title>
+    <title>SoulChat - Your Safe Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -89,54 +89,36 @@
             height: 100%;
             z-index: 0; /* Behind chat container */
             pointer-events: none; /* Do not interfere with mouse events */
-            opacity: 0.8; /* Subtle transparency */
-            transition: background 0.8s ease-in-out, opacity 0.5s ease-in-out;
-            background-size: 400% 400%; /* For gradient animations */
+            opacity: 1; /* Make it solid */
+            transition: background 0.3s ease-in-out, opacity 0.5s ease-in-out; /* Keep transitions for theme change */
+            background-color: var(--bg-primary); /* Use primary background color for constant look */
         }
 
-        /* JOY ROOM BACKGROUND */
+        /* JOY ROOM BACKGROUND - REMOVED ANIMATION AND GRADIENT */
         body.theme-Joy #mood-background {
-            /* Using a combination of vibrant yellows and oranges */
-            background: linear-gradient(135deg, #FFD700, #FFEA00, #FFA500, #FFD700);
-            animation: joyfulGradient 15s ease infinite alternate;
-            opacity: 0.6; /* Slightly more vibrant */
-        }
-        @keyframes joyfulGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            background-color: var(--bg-primary);
+            animation: none; /* No animation */
+            opacity: 1; 
         }
 
-        /* SADNESS ROOM BACKGROUND */
+        /* SADNESS ROOM BACKGROUND - REMOVED ANIMATION AND GRADIENT */
         body.theme-Sadness #mood-background {
-            /* Deep, cool blues and greys */
-            background: linear-gradient(180deg, #34495e, #2c3e50, #1a2b3c);
-            animation: melancholyWave 20s ease-in-out infinite;
-            opacity: 0.7; /* Subtly opaque */
-        }
-        @keyframes melancholyWave {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-5%); }
-            100% { transform: translateY(0); }
+            background-color: var(--bg-primary);
+            animation: none; /* No animation */
+            opacity: 1;
         }
         
-        /* COMFORT ROOM BACKGROUND */
+        /* COMFORT ROOM BACKGROUND - REMOVED ANIMATION AND GRADIENT */
         body.theme-Comfort #mood-background {
-            /* Warm, inviting greens and muted yellows */
-            background: linear-gradient(90deg, #8bc34a, #aed581, #c5e1a5);
-            animation: comfortPulse 18s ease infinite alternate;
-            opacity: 0.5; /* More gentle */
-        }
-        @keyframes comfortPulse {
-            0% { background-size: 400% 400%; background-position: 0% 50%; }
-            50% { background-size: 420% 420%; background-position: 100% 50%; }
-            100% { background-size: 400% 400%; background-position: 0% 50%; }
+            background-color: var(--bg-primary);
+            animation: none; /* No animation */
+            opacity: 1;
         }
 
-        /* Default/Fallback background */
+        /* Default/Fallback background - ENSURE IT'S SOLID */
         body:not([class*="theme-"]) #mood-background {
-            background: linear-gradient(45deg, var(--mood-bg-start), var(--mood-bg-end));
-            opacity: 0.8;
+            background-color: var(--bg-primary);
+            opacity: 1;
         }
 
         /* Ensure chat container is above the mood background */
@@ -148,7 +130,7 @@
             width: 98%;
             margin: 0 auto;
             background-color: var(--bg-secondary);
-            border-radius: 1.5rem; /* Made more rounded */
+            border-radius: 0.5rem;
             box-shadow: var(--box-shadow);
             position: relative; /* Positioned above mood-background */
             z-index: 10; 
@@ -202,7 +184,7 @@
             gap: 0.5rem;
             scroll-behavior: smooth;
             min-height: 0;
-            background-color: var(--bg-secondary); /* Ensure it uses secondary background */
+            background-color: var(--bg-primary); /* CHANGED to primary background for consistency */
             transition: background-color 0.3s ease-in-out;
         }
 
@@ -307,7 +289,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4:px solid var(--accent-color);
+            border-left: 4px solid var(--accent-color);
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
@@ -375,7 +357,7 @@
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
             box-shadow: none;
             color: white;
-            border-radius: 9999px; /* Made fully round */
+            border-radius: 0.5rem;
             width: 2.5rem;
             height: 2.5rem;
             display: flex;
@@ -393,23 +375,24 @@
             box-shadow: none;
         }
 
-        /* Paper Plane Animation */
-        .paper-plane-animation {
-            position: absolute;
-            font-size: 1.5rem; /* Adjust size as needed */
-            color: var(--accent-color); /* Color of the paper plane */
-            opacity: 0;
-            animation: paper-plane-takeoff 1s ease-out forwards;
-            pointer-events: none;
-            z-index: 50;
-            text-shadow: 0 0 5px rgba(88, 101, 242, 0.5); /* Subtle glow */
-        }
-        @keyframes paper-plane-takeoff {
-            0% { transform: translate(var(--x-offset, 0), 0) scale(0.5) rotate(0deg); opacity: 0.9; }
-            30% { transform: translate(var(--x-offset, 0), -30px) scale(0.7) rotate(var(--rotation, 0deg)); opacity: 0.7; }
-            70% { transform: translate(var(--x-offset, 0), -70px) scale(1.0) rotate(var(--rotation, 0deg)); opacity: 0.3; }
-            100% { transform: translate(var(--x-offset, 0), -100px) scale(1.2) rotate(var(--rotation, 0deg)); opacity: 0; }
-        }
+        /* New: Floating Paper Plane on Send */
+.floating-plane {
+    position: absolute;
+    font-size: 1.8rem; /* Match original emoji size */
+    color: var(--accent-color); /* Use accent color for the plane */
+    opacity: 0;
+    animation: plane-takeoff 1s ease-out forwards; /* New animation name */
+    pointer-events: none;
+    z-index: 50;
+    text-shadow: 0 0 5px rgba(88, 101, 242, 0.5); /* Discord blue glow */
+}
+@keyframes plane-takeoff {
+    0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0.9; }
+    20% { opacity: 1; transform: translateY(-20px) translateX(0) scale(0.9); }
+    50% { transform: translateY(-70px) translateX(20px) rotate(20deg) scale(1.1); opacity: 0.5; } /* Rotate slightly */
+    100% { transform: translateY(-150px) translateX(40px) rotate(30deg) scale(1.2); opacity: 0; } /* Take off higher and further */
+}
+
 
         /* New: Confetti/Sparkle Container */
         #confetti-container {
@@ -815,6 +798,10 @@
             };
 
             // Apply initial mood theme class to body
+            // This line ensures the body class `theme-Comfort` (or other moods) is still applied
+            // This is important because the JavaScript still sets `currentRoomMood` based on the URL,
+            // and `roomNameElement.textContent` uses it. Although the background CSS is now static,
+            // keeping this helps if you later decide to reintroduce mood-specific elements beyond background.
             document.body.classList.add(`theme-${currentRoomMood}`);
 
 
@@ -894,8 +881,8 @@
                     
                     setTypingStatus(false); 
 
-                    // New: Trigger paper plane animation and streak update
-                    triggerPaperPlaneAnimation(sendButton); // Changed function name
+                    // New: Trigger floating emoji and streak update
+                    triggerFloatingEmoji(sendButton);
                     updateEngagementStreak();
                     if (Math.random() < 0.2) { // 20% chance for confetti
                         triggerConfetti(sendButton);
@@ -1228,31 +1215,26 @@
                 dailyReflectionModal.classList.remove('active'); 
             });
 
-            // --- Paper Plane Animation on Send ---
-            function triggerPaperPlaneAnimation(targetElement) {
-                const rect = targetElement.getBoundingClientRect();
-                
-                const paperPlane = document.createElement('div');
-                paperPlane.classList.add('paper-plane-animation');
-                paperPlane.innerHTML = '<i class="fas fa-paper-plane"></i>'; // Paper plane icon
-                
-                // Random horizontal offset and rotation for a "randomly up" effect
-                const randomXOffset = (Math.random() - 0.5) * 80; // -40px to +40px horizontal deviation
-                const randomRotation = (Math.random() - 0.5) * 45; // -22.5deg to +22.5deg rotation
+            // --- New: Floating Emoji on Send ---
+            function triggerFloatingEmoji(targetElement) {
+    const rect = targetElement.getBoundingClientRect();
+    
+    // Create the paper plane element
+    const floatingPlane = document.createElement('i');
+    floatingPlane.classList.add('fas', 'fa-paper-plane', 'floating-plane'); // Add custom class for styling
+    
+    // Position it relative to the target element (send button)
+    floatingPlane.style.left = `${rect.left + rect.width / 2 - 12}px`; /* Center icon on button */
+    floatingPlane.style.top = `${rect.top - 10}px`; /* Just above the button */
+    
+    document.body.appendChild(floatingPlane);
 
-                paperPlane.style.left = `${rect.left + rect.width / 2 - 12}px`; /* Center on button horizontally */
-                paperPlane.style.top = `${rect.top - 10}px`; /* Just above the button vertically */
-                paperPlane.style.setProperty('--x-offset', `${randomXOffset}px`);
-                paperPlane.style.setProperty('--rotation', `${randomRotation}deg`);
-                
-                document.body.appendChild(paperPlane);
-
-                paperPlane.addEventListener('animationend', () => {
-                    paperPlane.remove();
-                });
-            }
-
-            // --- Update Engagement Streak (Frontend Only) ---
+    // Remove the element after the animation
+    floatingPlane.addEventListener('animationend', () => {
+        floatingPlane.remove();
+    });
+}
+            // --- New: Update Engagement Streak (Frontend Only) ---
             function updateEngagementStreak() {
                 engagementStreak++;
                 streakCountElement.textContent = engagementStreak;
@@ -1261,13 +1243,13 @@
                 engagementStreakElement.classList.add('pop');
             }
 
-            // --- Dynamic Input Placeholder ---
+            // --- New: Dynamic Input Placeholder ---
             function updatePlaceholder() {
                 messageInput.placeholder = placeholderMessages[currentPlaceholderIndex];
                 currentPlaceholderIndex = (currentPlaceholderIndex + 1) % placeholderMessages.length;
             }
 
-            // --- Confetti/Sparkle Effect (unchanged) ---
+            // --- New: Confetti/Sparkle Effect ---
             function triggerConfetti(targetElement) {
                 const rect = targetElement.getBoundingClientRect();
                 const numParticles = Math.floor(Math.random() * 5) + 5; // 5 to 9 particles
