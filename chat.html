@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoodChat - Your Safe Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght[*400;500;600;700*]&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Custom CSS variables for themes */
@@ -25,6 +25,10 @@
             --box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Lighter shadow */
             --modal-overlay-bg: rgba(0, 0, 0, 0.5); /* Semi-transparent black for modal */
             --modal-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Lighter modal shadow */
+
+            /* New: Message bubble outline for light theme */
+            --message-bubble-outline: color-mix(in srgb, var(--message-bg) 90%, black 10%);
+            --sent-message-bubble-outline: color-mix(in srgb, var(--sent-message-bg) 90%, black 10%);
 
             /* Background specific variables (default light) */
             --mood-bg-start: #f0f2f5;
@@ -47,6 +51,10 @@
             --box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Deeper shadow for app feel */
             --modal-overlay-bg: rgba(0, 0, 0, 0.7); /* Darker, more opaque overlay */
             --modal-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Stronger, darker shadow */
+            
+            /* New: Message bubble outline for dark theme */
+            --message-bubble-outline: color-mix(in srgb, var(--message-bg) 90%, white 10%);
+            --sent-message-bubble-outline: color-mix(in srgb, var(--sent-message-bg) 90%, white 10%);
             
             /* Background specific variables (dark theme) */
             --mood-bg-start: #36393f;
@@ -140,7 +148,7 @@
             width: 98%;
             margin: 0 auto;
             background-color: var(--bg-secondary);
-            border-radius: 0.5rem;
+            border-radius: 1.5rem; /* Made more rounded */
             box-shadow: var(--box-shadow);
             position: relative; /* Positioned above mood-background */
             z-index: 10; 
@@ -207,7 +215,6 @@
             line-height: 1.4;
             position: relative;
             transition: background-color 0.1s ease-out;
-            animation: fadeIn 0.3s ease-out;
             word-wrap: break-word;
             color: var(--text-primary);
             background-color: transparent;
@@ -217,23 +224,35 @@
             background-color: var(--message-bg);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* New: Message animations */
         .message-bubble.received {
             align-self: flex-start;
             margin-right: auto;
             border-radius: 0.375rem;
             background-color: var(--message-bg);
+            animation: slideInLeftFade 0.4s ease-out forwards;
+            opacity: 0; /* Start hidden for animation */
+            border: 1px solid var(--message-bubble-outline); /* Added border for received messages */
         }
+        @keyframes slideInLeftFade {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
         .message-bubble.sent {
             align-self: flex-end;
             margin-left: auto;
             border-radius: 0.375rem;
             background-color: var(--sent-message-bg);
+            animation: slideInRightFade 0.4s ease-out forwards;
+            opacity: 0; /* Start hidden for animation */
+            border: 1px solid var(--sent-message-bubble-outline); /* Added border for sent messages */
         }
+        @keyframes slideInRightFade {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
 
         .message-bubble .sender-info {
             font-size: 0.875rem;
@@ -253,6 +272,8 @@
         .message-bubble p {
             color: var(--text-primary);
             margin-top: 0.2rem;
+            font-size: 0.95rem; /* Slightly smaller for better line density */
+            line-height: 1.35;
         }
 
         /* Reply specific styling */
@@ -263,26 +284,12 @@
             border-radius: 0.3rem;
             margin-bottom: 0.4rem;
             margin-top: 0.2rem;
+            border: 1px solid var(--message-bubble-outline); /* Added border to reply preview */
         }
         body.dark-theme .message-bubble .reply-preview {
             background-color: rgba(0, 0, 0, 0.2);
         }
 
-        .message-bubble .reply-preview .reply-sender {
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: var(--accent-color);
-            opacity: 0.9;
-        }
-        .message-bubble .reply-preview .reply-text {
-            font-size: 0.8rem;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Message input area */
         .message-input-area {
             padding: 0.75rem 1rem;
             background-color: var(--bg-secondary);
@@ -300,7 +307,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4px solid var(--accent-color);
+            border-left: 4:px solid var(--accent-color);
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
@@ -368,7 +375,7 @@
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
             box-shadow: none;
             color: white;
-            border-radius: 0.5rem;
+            border-radius: 9999px; /* Made fully round */
             width: 2.5rem;
             height: 2.5rem;
             display: flex;
@@ -386,30 +393,85 @@
             box-shadow: none;
         }
 
-        /* Floating heart animation on send */
-        .floating-heart-send {
+        /* Paper Plane Animation */
+        .paper-plane-animation {
             position: absolute;
-            font-size: 1.8rem;
-            color: var(--accent-color);
+            font-size: 1.5rem; /* Adjust size as needed */
+            color: var(--accent-color); /* Color of the paper plane */
             opacity: 0;
-            animation: float-send 1s ease-out forwards;
+            animation: paper-plane-takeoff 1s ease-out forwards;
             pointer-events: none;
             z-index: 50;
-            text-shadow: 0 0 5px rgba(88, 101, 242, 0.5);
+            text-shadow: 0 0 5px rgba(88, 101, 242, 0.5); /* Subtle glow */
         }
-        body.dark-theme .floating-heart-send {
-            text-shadow: 0 0 5px rgba(88, 101, 242, 0.5); /* Discord blue glow */
-        }
-        body.light-theme .floating-heart-send {
-            text-shadow: 0 0 5px rgba(90, 103, 216, 0.5); /* Lighter blue glow */
+        @keyframes paper-plane-takeoff {
+            0% { transform: translate(var(--x-offset, 0), 0) scale(0.5) rotate(0deg); opacity: 0.9; }
+            30% { transform: translate(var(--x-offset, 0), -30px) scale(0.7) rotate(var(--rotation, 0deg)); opacity: 0.7; }
+            70% { transform: translate(var(--x-offset, 0), -70px) scale(1.0) rotate(var(--rotation, 0deg)); opacity: 0.3; }
+            100% { transform: translate(var(--x-offset, 0), -100px) scale(1.2) rotate(var(--rotation, 0deg)); opacity: 0; }
         }
 
-        @keyframes float-send {
-            0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0.9; }
-            30% { transform: translateY(-30px) translateX(10px) scale(0.7); opacity: 0.7; }
-            70% { transform: translateY(-70px) translateX(20px) scale(1.0); opacity: 0.3; }
-            100% { transform: translateY(-100px) translateX(25px) scale(1.2); opacity: 0; }
+        /* New: Confetti/Sparkle Container */
+        #confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 55; /* Above floating emoji, below modal */
         }
+        .confetti-particle {
+            position: absolute;
+            opacity: 0;
+            animation: confetti-fall 1s ease-out forwards;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translate(var(--x-start), var(--y-start)) scale(0.5); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(var(--x-end), var(--y-end)) scale(1); opacity: 0; }
+        }
+        
+        /* Engagement Streak styles */
+        .engagement-streak {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background-color: var(--bg-tertiary);
+            padding: 0.3rem 0.6rem;
+            border-radius: 9999px; /* Pill shape */
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        }
+        .engagement-streak .fa-fire {
+            color: #FF7F00; /* Fire color */
+            transition: transform 0.2s ease-out;
+        }
+        .engagement-streak.pop .fa-fire {
+            animation: streak-pop 0.3s ease-out;
+        }
+        .engagement-streak.pop .streak-count {
+            animation: streak-count-pop 0.3s ease-out;
+        }
+        @keyframes streak-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        @keyframes streak-count-pop {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+            100% { transform: translateY(0); }
+        }
+
 
         /* Daily reflection modal */
         .modal-overlay {
@@ -529,12 +591,17 @@
                 padding: 1.2rem;
                 width: 95%;
             }
+            /* Adjustments for streak on mobile if needed */
+            .engagement-streak {
+                font-size: 0.7rem; /* Smaller font on mobile */
+                padding: 0.2rem 0.4rem;
+            }
         }
 
     </style>
 </head>
 <body>
-    <div id="mood-background"></div> <div id="daily-reflection-modal" class="modal-overlay">
+    <div id="mood-background"></div> <div id="confetti-container"></div> <div id="daily-reflection-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 class="text-2xl font-bold mb-4">Hello Soul,</h3>
             <p class="text-lg mb-6">What are you feeling today? Share your heart.</p>
@@ -546,6 +613,10 @@
         <div class="top-bar flex items-center justify-between z-10">
             <div class="flex items-center gap-2">
                 <h2 id="room-name" class="text-xl font-semibold"></h2>
+                <div id="engagement-streak" class="engagement-streak ml-2">
+                    <i class="fas fa-fire"></i>
+                    <span class="streak-count">0</span>
+                </div>
             </div>
             <div class="flex items-center gap-4">
                 <button id="theme-toggle" class="hover:text-gray-200 transition-colors" title="Toggle Theme">
@@ -603,7 +674,7 @@
             <div class="flex gap-2 items-end">
                 <textarea
                     id="message-input"
-                    placeholder="Message #general"
+                    placeholder="Share your thoughts..."
                     class="message-input flex-grow"
                     rows="1"
                 ></textarea>
@@ -629,6 +700,21 @@
         // --- Reply State ---
         let replyingToMessage = null; // Stores { docId, nickname, text } of the message being replied to
 
+        // --- Engagement Streak (Frontend Only) ---
+        let engagementStreak = 0;
+        const engagementEmojis = ['❤️', '✨', '💡', '👍'];
+        const confettiEmojis = ['✨', '🌟', '💖', '💡', '🌈']; // Emojis for confetti
+        const placeholderMessages = [
+            "Share your thoughts...",
+            "What's on your mind?",
+            "Type a message...",
+            "Let it all out...",
+            "Send some kindness...",
+            "Your words matter...",
+            "What's new with you?"
+        ];
+        let currentPlaceholderIndex = 0;
+
 
         document.addEventListener('DOMContentLoaded', async () => {
             const roomNameElement = document.getElementById('room-name'); 
@@ -651,6 +737,11 @@
             const replyPreviewText = replyInputPreview.querySelector('.reply-message-text');
             const cancelReplyBtn = document.getElementById('cancel-reply-btn');
 
+            // New: Engagement Streak elements
+            const engagementStreakElement = document.getElementById('engagement-streak');
+            const streakCountElement = engagementStreakElement.querySelector('.streak-count');
+            const confettiContainer = document.getElementById('confetti-container');
+
 
             let currentNickname = ''; 
             let currentRoomMood = ''; 
@@ -666,7 +757,7 @@
               apiKey: "AIzaSyAIerQSDRGPsULxT-24e1kJnPN3bOD5lFo", 
               authDomain: "soulchat-app.firebaseapp.com", 
               projectId: "soulchat-app", 
-              storageBucket: "soulchat-app.firebasestorage.app", 
+              storageBucket: "soulchat-app.firebaseapp.com", 
               messagingSenderId: "595441139618", 
               appId: "1:595441139618:web:56eb81bb3d6bde776c3cfb", 
               measurementId: "G-61G3ZDNXJZ" 
@@ -729,7 +820,9 @@
 
             const initialRoomInfo = roomMoods[currentRoomMood]; 
             roomNameElement.textContent = "# " + currentRoomMood.toLowerCase() + " Room";
-            messageInput.placeholder = `Message #${currentRoomMood.toLowerCase()}`;
+            
+            // Set initial placeholder text
+            updatePlaceholder();
 
 
             // --- Theme Toggling Logic ---
@@ -763,7 +856,7 @@
             });
 
 
-            // --- Message Sending Functionality (unchanged) ---
+            // --- Message Sending Functionality (enhanced for UX) ---
             async function sendMessage() {
                 const messageText = messageInput.value.trim(); 
                 if (messageText === '') return; 
@@ -800,6 +893,16 @@
                     adjustTextareaHeight(); 
                     
                     setTypingStatus(false); 
+
+                    // New: Trigger paper plane animation and streak update
+                    triggerPaperPlaneAnimation(sendButton); // Changed function name
+                    updateEngagementStreak();
+                    if (Math.random() < 0.2) { // 20% chance for confetti
+                        triggerConfetti(sendButton);
+                    }
+
+                    // New: Update placeholder after sending message
+                    updatePlaceholder();
 
                     await addDoc(collection(db, `chat_rooms/${currentRoomMood}/messages`), {
                         ...messageData,
@@ -853,7 +956,7 @@
                 });
             }
 
-            // --- Display Message Function (Modified only for notification logic) ---
+            // --- Display Message Function (enhanced for new animations) ---
             function displayMessage(message, id, isOptimistic = false) {
                 if (document.querySelector(`.message-bubble[data-doc-id="${id}"]`) && !isOptimistic) { 
                     console.log("Skipping display of duplicate real message:", id); 
@@ -861,7 +964,7 @@
                 }
 
                 const messageBubble = document.createElement('div'); 
-                messageBubble.classList.add('message-bubble', 'opacity-0'); 
+                messageBubble.classList.add('message-bubble'); 
 
                 if (isOptimistic) { 
                     messageBubble.setAttribute('data-local-id', id); 
@@ -924,7 +1027,6 @@
                 `; 
 
                 chatMessages.appendChild(messageBubble); 
-                setTimeout(() => messageBubble.classList.remove('opacity-0'), 10); 
             }
 
             // --- New: Function to request notification permission (unchanged) ---
@@ -1125,6 +1227,77 @@
             closeReflectionModalButton.addEventListener('click', () => { 
                 dailyReflectionModal.classList.remove('active'); 
             });
+
+            // --- Paper Plane Animation on Send ---
+            function triggerPaperPlaneAnimation(targetElement) {
+                const rect = targetElement.getBoundingClientRect();
+                
+                const paperPlane = document.createElement('div');
+                paperPlane.classList.add('paper-plane-animation');
+                paperPlane.innerHTML = '<i class="fas fa-paper-plane"></i>'; // Paper plane icon
+                
+                // Random horizontal offset and rotation for a "randomly up" effect
+                const randomXOffset = (Math.random() - 0.5) * 80; // -40px to +40px horizontal deviation
+                const randomRotation = (Math.random() - 0.5) * 45; // -22.5deg to +22.5deg rotation
+
+                paperPlane.style.left = `${rect.left + rect.width / 2 - 12}px`; /* Center on button horizontally */
+                paperPlane.style.top = `${rect.top - 10}px`; /* Just above the button vertically */
+                paperPlane.style.setProperty('--x-offset', `${randomXOffset}px`);
+                paperPlane.style.setProperty('--rotation', `${randomRotation}deg`);
+                
+                document.body.appendChild(paperPlane);
+
+                paperPlane.addEventListener('animationend', () => {
+                    paperPlane.remove();
+                });
+            }
+
+            // --- Update Engagement Streak (Frontend Only) ---
+            function updateEngagementStreak() {
+                engagementStreak++;
+                streakCountElement.textContent = engagementStreak;
+                engagementStreakElement.classList.remove('pop'); // Remove to re-trigger animation
+                void engagementStreakElement.offsetWidth; // Trigger reflow
+                engagementStreakElement.classList.add('pop');
+            }
+
+            // --- Dynamic Input Placeholder ---
+            function updatePlaceholder() {
+                messageInput.placeholder = placeholderMessages[currentPlaceholderIndex];
+                currentPlaceholderIndex = (currentPlaceholderIndex + 1) % placeholderMessages.length;
+            }
+
+            // --- Confetti/Sparkle Effect (unchanged) ---
+            function triggerConfetti(targetElement) {
+                const rect = targetElement.getBoundingClientRect();
+                const numParticles = Math.floor(Math.random() * 5) + 5; // 5 to 9 particles
+
+                for (let i = 0; i < numParticles; i++) {
+                    const particle = document.createElement('span');
+                    particle.classList.add('confetti-particle');
+                    particle.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
+
+                    // Random position around the send button
+                    const startX = rect.left + rect.width / 2 + (Math.random() - 0.5) * rect.width;
+                    const startY = rect.top + rect.height / 2 + (Math.random() - 0.5) * rect.height;
+
+                    // Random end position slightly above and spread out
+                    const endX = startX + (Math.random() - 0.5) * 100;
+                    const endY = startY - (Math.random() * 80 + 50);
+
+                    particle.style.setProperty('--x-start', `${startX}px`);
+                    particle.style.setProperty('--y-start', `${startY}px`);
+                    particle.style.setProperty('--x-end', `${endX}px`);
+                    particle.style.setProperty('--y-end', `${endY}px`);
+
+                    confettiContainer.appendChild(particle);
+
+                    particle.addEventListener('animationend', () => {
+                        particle.remove();
+                    });
+                }
+            }
+
 
             // Initial calls
             adjustTextareaHeight(); 
