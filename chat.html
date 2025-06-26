@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> <title>MoodChat - Your Safe Space</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoulChat - Your Safe Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -25,12 +26,13 @@
             --modal-overlay-bg: rgba(0, 0, 0, 0.5); /* Semi-transparent black for modal */
             --modal-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Lighter modal shadow */
 
-            /* Message bubble outline for light theme */
+            /* New: Message bubble outline for light theme */
             --message-bubble-outline: color-mix(in srgb, var(--message-bg) 90%, black 10%);
             --sent-message-bubble-outline: color-mix(in srgb, var(--sent-message-bg) 90%, black 10%);
 
-            /* iOS Safe Area Insets (default 0, will be overridden by browser) */
-            --sab: 0px; /* Safe Area Bottom */
+            /* Background specific variables (default light) */
+            --mood-bg-start: #f0f2f5;
+            --mood-bg-end: #e0e2e5;
         }
 
         body.dark-theme {
@@ -50,9 +52,13 @@
             --modal-overlay-bg: rgba(0, 0, 0, 0.7); /* Darker, more opaque overlay */
             --modal-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Stronger, darker shadow */
             
-            /* Message bubble outline for dark theme */
+            /* New: Message bubble outline for dark theme */
             --message-bubble-outline: color-mix(in srgb, var(--message-bg) 90%, white 10%);
             --sent-message-bubble-outline: color-mix(in srgb, var(--sent-message-bg) 90%, white 10%);
+            
+            /* Background specific variables (dark theme) */
+            --mood-bg-start: #36393f;
+            --mood-bg-end: #2f3136;
         }
 
         /* Base styles */
@@ -60,20 +66,79 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Ensure body itself doesn't scroll */
+            overflow: hidden;
         }
 
         body {
             font-family: 'Inter', 'Poppins', sans-serif;
-            background: var(--bg-primary); /* Base background */
+            background: var(--bg-primary); /* Base background for safety */
             display: flex;
             flex-direction: column;
             height: 100%;
             color: var(--text-primary);
             transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-            position: relative;
+            position: relative; /* Needed for absolute positioning of background effects */
+        }
+
+        /* --- Mood-based Dynamic Backgrounds --- */
+        #mood-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind chat container */
+            pointer-events: none; /* Do not interfere with mouse events */
+            opacity: 0.8; /* Subtle transparency */
+            transition: background 0.8s ease-in-out, opacity 0.5s ease-in-out;
+            background-size: 400% 400%; /* For gradient animations */
+        }
+
+        /* JOY ROOM BACKGROUND */
+        body.theme-Joy #mood-background {
+            /* Using a combination of vibrant yellows and oranges */
+            background: linear-gradient(135deg, #FFD700, #FFEA00, #FFA500, #FFD700);
+            animation: joyfulGradient 15s ease infinite alternate;
+            opacity: 0.6; /* Slightly more vibrant */
+        }
+        @keyframes joyfulGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* SADNESS ROOM BACKGROUND */
+        body.theme-Sadness #mood-background {
+            /* Deep, cool blues and greys */
+            background: linear-gradient(180deg, #34495e, #2c3e50, #1a2b3c);
+            animation: melancholyWave 20s ease-in-out infinite;
+            opacity: 0.7; /* Subtly opaque */
+        }
+        @keyframes melancholyWave {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5%); }
+            100% { transform: translateY(0); }
         }
         
+        /* COMFORT ROOM BACKGROUND */
+        body.theme-Comfort #mood-background {
+            /* Warm, inviting greens and muted yellows */
+            background: linear-gradient(90deg, #8bc34a, #aed581, #c5e1a5);
+            animation: comfortPulse 18s ease infinite alternate;
+            opacity: 0.5; /* More gentle */
+        }
+        @keyframes comfortPulse {
+            0% { background-size: 400% 400%; background-position: 0% 50%; }
+            50% { background-size: 420% 420%; background-position: 100% 50%; }
+            100% { background-size: 400% 400%; background-position: 0% 50%; }
+        }
+
+        /* Default/Fallback background */
+        body:not([class*="theme-"]) #mood-background {
+            background: linear-gradient(45deg, var(--mood-bg-start), var(--mood-bg-end));
+            opacity: 0.8;
+        }
+
         /* Ensure chat container is above the mood background */
         .chat-container {
             flex-grow: 1;
@@ -85,19 +150,14 @@
             background-color: var(--bg-secondary);
             border-radius: 0.5rem;
             box-shadow: var(--box-shadow);
-            position: relative;
+            position: relative; /* Positioned above mood-background */
             z-index: 10; 
             height: 96%;
             margin-top: 2%;
             margin-bottom: 2%;
             overflow: hidden;
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-secondary); /* Ensure it uses secondary background */
             transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-        
-        /* Dynamic height for chat-container based on keyboard */
-        body.keyboard-open .chat-container {
-            /* This will be set dynamically by JS to account for keyboard height */
         }
 
         /* Top Bar */
@@ -106,7 +166,7 @@
             border-bottom: 1px solid var(--border-color);
             color: var(--text-primary);
             padding: 0.75rem 1rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Lighter shadow for top bar */
             transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
         .top-bar .text-xl {
@@ -125,7 +185,7 @@
         }
         .top-bar button:hover, .top-bar a:hover {
             color: var(--text-primary);
-            background-color: rgba(0, 0, 0, 0.08);
+            background-color: rgba(0, 0, 0, 0.08); /* Adjusted for light/dark safety */
         }
         body.dark-theme .top-bar button:hover, body.dark-theme .top-bar a:hover {
             background-color: rgba(255, 255, 255, 0.08);
@@ -142,10 +202,8 @@
             gap: 0.5rem;
             scroll-behavior: smooth;
             min-height: 0;
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-secondary); /* Ensure it uses secondary background */
             transition: background-color 0.3s ease-in-out;
-            padding-bottom: 1rem;
-            box-sizing: border-box;
         }
 
         /* Message bubble base */
@@ -166,15 +224,15 @@
             background-color: var(--message-bg);
         }
 
-        /* Message animations */
+        /* New: Message animations */
         .message-bubble.received {
             align-self: flex-start;
             margin-right: auto;
             border-radius: 0.375rem;
             background-color: var(--message-bg);
             animation: slideInLeftFade 0.4s ease-out forwards;
-            opacity: 0;
-            border: 1px solid var(--message-bubble-outline);
+            opacity: 0; /* Start hidden for animation */
+            border: 1px solid var(--message-bubble-outline); /* Added border for received messages */
         }
         @keyframes slideInLeftFade {
             from { opacity: 0; transform: translateX(-20px); }
@@ -187,13 +245,14 @@
             border-radius: 0.375rem;
             background-color: var(--sent-message-bg);
             animation: slideInRightFade 0.4s ease-out forwards;
-            opacity: 0;
-            border: 1px solid var(--sent-message-bubble-outline);
+            opacity: 0; /* Start hidden for animation */
+            border: 1px solid var(--sent-message-bubble-outline); /* Added border for sent messages */
         }
         @keyframes slideInRightFade {
             from { opacity: 0; transform: translateX(20px); }
             to { opacity: 1; transform: translateX(0); }
         }
+
 
         .message-bubble .sender-info {
             font-size: 0.875rem;
@@ -213,19 +272,19 @@
         .message-bubble p {
             color: var(--text-primary);
             margin-top: 0.2rem;
-            font-size: 0.95rem;
+            font-size: 0.95rem; /* Slightly smaller for better line density */
             line-height: 1.35;
         }
 
         /* Reply specific styling */
         .message-bubble .reply-preview {
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.1); /* Adjusted for light theme */
             border-left: 4px solid var(--text-secondary);
             padding: 0.4rem 0.75rem;
             border-radius: 0.3rem;
             margin-bottom: 0.4rem;
             margin-top: 0.2rem;
-            border: 1px solid var(--message-bubble-outline);
+            border: 1px solid var(--message-bubble-outline); /* Added border to reply preview */
         }
         body.dark-theme .message-bubble .reply-preview {
             background-color: rgba(0, 0, 0, 0.2);
@@ -238,8 +297,6 @@
             border-bottom-left-radius: 0.5rem;
             border-bottom-right-radius: 0.5rem;
             transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
-            /* Added dynamic bottom padding for keyboard */
-            padding-bottom: calc(0.75rem + var(--sab));
         }
 
         .reply-input-preview {
@@ -302,7 +359,7 @@
             border-color: var(--accent-color);
             box-shadow: 0 0 0 1px var(--accent-color);
         }
-        /* Added CSS to hide scrollbar arrows */
+        /* --- START: Added CSS to hide scrollbar arrows --- */
         .message-input::-webkit-scrollbar {
             display: none;
         }
@@ -311,6 +368,7 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        /* --- END: Added CSS to hide scrollbar arrows --- */
 
         .send-button {
             background-color: var(--accent-color);
@@ -334,7 +392,87 @@
             transform: scale(0.95);
             box-shadow: none;
         }
+
+        /* Floating emoji on send (replaces floating heart) */
+        .floating-emoji {
+            position: absolute;
+            font-size: 1.8rem;
+            color: var(--accent-color); /* Emojis usually ignore this, but good to have */
+            opacity: 0;
+            animation: float-emoji 1s ease-out forwards;
+            pointer-events: none;
+            z-index: 50;
+            text-shadow: 0 0 5px rgba(88, 101, 242, 0.5); /* Discord blue glow */
+        }
+        @keyframes float-emoji {
+            0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0.9; }
+            30% { transform: translateY(-30px) translateX(10px) scale(0.7); opacity: 0.7; }
+            70% { transform: translateY(-70px) translateX(20px) scale(1.0); opacity: 0.3; }
+            100% { transform: translateY(-100px) translateX(25px) scale(1.2); opacity: 0; }
+        }
+
+        /* New: Confetti/Sparkle Container */
+        #confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 55; /* Above floating emoji, below modal */
+        }
+        .confetti-particle {
+            position: absolute;
+            opacity: 0;
+            animation: confetti-fall 1s ease-out forwards;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translate(var(--x-start), var(--y-start)) scale(0.5); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(var(--x-end), var(--y-end)) scale(1); opacity: 0; }
+        }
         
+        /* Engagement Streak styles */
+        .engagement-streak {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background-color: var(--bg-tertiary);
+            padding: 0.3rem 0.6rem;
+            border-radius: 9999px; /* Pill shape */
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        }
+        .engagement-streak .fa-fire {
+            color: #FF7F00; /* Fire color */
+            transition: transform 0.2s ease-out;
+        }
+        .engagement-streak.pop .fa-fire {
+            animation: streak-pop 0.3s ease-out;
+        }
+        .engagement-streak.pop .streak-count {
+            animation: streak-count-pop 0.3s ease-out;
+        }
+        @keyframes streak-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        @keyframes streak-count-pop {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+            100% { transform: translateY(0); }
+        }
+
+
         /* Daily reflection modal */
         .modal-overlay {
             position: fixed;
@@ -426,68 +564,24 @@
             border-color: var(--border-color);
         }
 
-        /* Confetti/Sparkle Effect */
-        .confetti-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 99; /* Below modals, above chat */
-        }
-
-        .confetti-particle {
-            position: absolute;
-            font-size: 1.2rem;
-            animation: confetti-fall 0.8s ease-out forwards;
-            opacity: 0;
-            transform: translate(var(--x-start), var(--y-start));
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Subtle glow */
-        }
-
-        @keyframes confetti-fall {
-            0% {
-                opacity: 0;
-                transform: translate(var(--x-start), var(--y-start)) scale(0.5);
-            }
-            20% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--x-end), var(--y-end)) scale(1.2) rotate(360deg);
-            }
-        }
-
         /* Mobile specific adjustments */
         @media (max-width: 767px) {
             .chat-container {
                 border-radius: 0;
                 box-shadow: none;
                 width: 100%;
-                height: 100%; /* Keep 100% height, let JS adjust on keyboard */
+                height: 100%;
                 margin: 0;
             }
             body {
                 padding: 0;
-                /* Use env(safe-area-inset-bottom) for padding-bottom for iOS safe areas */
-                padding-bottom: env(safe-area-inset-bottom); 
             }
             .top-bar {
                 padding: 0.75rem 1rem;
                 border-radius: 0;
-                padding-top: calc(0.75rem + env(safe-area-inset-top)); /* Adjust for iOS notch/dynamic island */
             }
             .message-input-area {
                 border-radius: 0;
-                /* This is handled by JS for keyboard, but ensure CSS doesn't conflict */
-                /* Use CSS variable to adapt to safe area bottom for consistent UI */
-                padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); 
-            }
-            .chat-messages {
-                padding-bottom: calc(1rem + env(safe-area-inset-bottom)); /* Ensure messages scroll above the safe area */
             }
             .message-bubble {
                 max-width: 100%;
@@ -497,23 +591,32 @@
                 padding: 1.2rem;
                 width: 95%;
             }
+            /* Adjustments for streak on mobile if needed */
+            .engagement-streak {
+                font-size: 0.7rem; /* Smaller font on mobile */
+                padding: 0.2rem 0.4rem;
+            }
         }
 
     </style>
 </head>
 <body>
-    <div id="daily-reflection-modal" class="modal-overlay">
+    <div id="mood-background"></div> <div id="confetti-container"></div> <div id="daily-reflection-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 class="text-2xl font-bold mb-4">Hello Soul,</h3>
             <p class="text-lg mb-6">What are you feeling today? Share your heart.</p>
             <button id="close-reflection-modal-button" class="py-2 px-6">Okay, I'll Share</button>
         </div>
     </div>
-    
-    <div id="confetti-container" class="confetti-container"></div> <div class="chat-container">
+
+    <div class="chat-container">
         <div class="top-bar flex items-center justify-between z-10">
             <div class="flex items-center gap-2">
                 <h2 id="room-name" class="text-xl font-semibold"></h2>
+                <div id="engagement-streak" class="engagement-streak ml-2">
+                    <i class="fas fa-fire"></i>
+                    <span class="streak-count">0</span>
+                </div>
             </div>
             <div class="flex items-center gap-4">
                 <button id="theme-toggle" class="hover:text-gray-200 transition-colors" title="Toggle Theme">
@@ -597,6 +700,10 @@
         // --- Reply State ---
         let replyingToMessage = null; // Stores { docId, nickname, text } of the message being replied to
 
+        // --- Engagement Streak (Frontend Only) ---
+        let engagementStreak = 0;
+        const engagementEmojis = ['✈જ⁀➴✉️', '✈જ⁀➴✉️','✈જ⁀➴✉️','✈જ⁀➴✉️','✈જ⁀➴✉️'];
+        const confettiEmojis = ['✈જ⁀➴✉️', '✈જ⁀➴✉️','✈જ⁀➴✉️','✈જ⁀➴✉️','✈જ⁀➴✉️']; // Emojis for confetti
         const placeholderMessages = [
             "Share your thoughts...",
             "What's on your mind?",
@@ -608,8 +715,6 @@
         ];
         let currentPlaceholderIndex = 0;
 
-        // Global variable to store initial viewport height for keyboard detection
-        let initialViewportHeight = window.innerHeight;
 
         document.addEventListener('DOMContentLoaded', async () => {
             const roomNameElement = document.getElementById('room-name'); 
@@ -618,9 +723,7 @@
             const sendButton = document.getElementById('send-button'); 
             const typingIndicatorElement = document.getElementById('typing-indicator'); 
             const messageInputArea = document.getElementById('message-input-area'); 
-            const chatContainer = document.querySelector('.chat-container'); // Get chat container
-            const confettiContainer = document.getElementById('confetti-container'); // Confetti container
-
+            
             const dailyReflectionModal = document.getElementById('daily-reflection-modal'); 
             const closeReflectionModalButton = document.getElementById('close-reflection-modal-button'); 
             
@@ -633,6 +736,12 @@
             const replyPreviewSender = replyInputPreview.querySelector('.reply-sender');
             const replyPreviewText = replyInputPreview.querySelector('.reply-message-text');
             const cancelReplyBtn = document.getElementById('cancel-reply-btn');
+
+            // New: Engagement Streak elements
+            const engagementStreakElement = document.getElementById('engagement-streak');
+            const streakCountElement = engagementStreakElement.querySelector('.streak-count');
+            const confettiContainer = document.getElementById('confetti-container');
+
 
             let currentNickname = ''; 
             let currentRoomMood = ''; 
@@ -662,15 +771,17 @@
                 auth = getAuth(app); 
                 analytics = getAnalytics(app); 
 
+                if (initialAuthToken) { 
+                    await signInWithCustomToken(auth, initialAuthToken); 
+                } else {
+                    await signInAnonymously(auth); 
+                }
+
                 onAuthStateChanged(auth, async (user) => { 
                     if (user) { 
                         userId = user.uid; 
                         console.log("Firebase Authenticated! User ID:", userId); 
-                        
-                        // Clear existing messages and setup real-time chat to ensure freshness
-                        chatMessages.innerHTML = ''; 
                         setupRealtimeChat(); 
-
                         setupTypingIndicatorListener(); 
                         cleanOldMessages(); 
                         setInterval(cleanOldMessages, 30 * 60 * 1000); 
@@ -678,20 +789,12 @@
                         await requestNotificationPermission();
 
                     } else {
-                        console.warn("No user signed in. Attempting anonymous sign-in..."); 
-                        try {
-                            await signInAnonymously(auth); 
-                        } catch (anonError) {
-                            console.error("Error signing in anonymously:", anonError);
-                            chatMessages.innerHTML = `<div class="text-center text-red-500 mt-8">Failed to authenticate. Chat features unavailable.</div>`;
-                            messageInput.disabled = true; 
-                            sendButton.disabled = true; 
-                        }
+                        console.warn("No user signed in. Real-time chat features may be limited."); 
                     }
                 });
 
             } catch (error) {
-                console.error("Error initializing Firebase:", error); 
+                console.error("Error initializing Firebase or authenticating:", error); 
                 chatMessages.innerHTML = `<div class="text-center text-red-500 mt-8">Failed to load chat. Please try again later. (Check console for details).</div>`; 
                 messageInput.disabled = true; 
                 sendButton.disabled = true; 
@@ -710,7 +813,11 @@
                 "Joy": {}, 
                 "Sadness": {} 
             };
-            
+
+            // Apply initial mood theme class to body
+            document.body.classList.add(`theme-${currentRoomMood}`);
+
+
             const initialRoomInfo = roomMoods[currentRoomMood]; 
             roomNameElement.textContent = "# " + currentRoomMood.toLowerCase() + " Room";
             
@@ -749,14 +856,13 @@
             });
 
 
-            // --- Message Sending Functionality ---
+            // --- Message Sending Functionality (enhanced for UX) ---
             async function sendMessage() {
                 const messageText = messageInput.value.trim(); 
                 if (messageText === '') return; 
 
                 if (!userId) { 
                     console.error("User not authenticated, cannot send message."); 
-                    alert("Failed to send message: Not authenticated. Please try refreshing the page.");
                     return; 
                 }
 
@@ -782,14 +888,21 @@
                     }
 
                     displayMessage(messageData, localMessageId, true); 
-
+                    
                     messageInput.value = ''; 
                     adjustTextareaHeight(); 
                     
                     setTypingStatus(false); 
 
+                    // New: Trigger floating emoji and streak update
+                    triggerFloatingEmoji(sendButton);
+                    updateEngagementStreak();
+                    if (Math.random() < 0.2) { // 20% chance for confetti
+                        triggerConfetti(sendButton);
+                    }
+
+                    // New: Update placeholder after sending message
                     updatePlaceholder();
-                    triggerConfetti(); // Trigger confetti effect
 
                     await addDoc(collection(db, `chat_rooms/${currentRoomMood}/messages`), {
                         ...messageData,
@@ -798,12 +911,13 @@
 
                 } catch (e) {
                     console.error("Error adding document: ", e); 
-                    alert("Failed to send message. Please try again.");
                 }
             }
 
-            // --- Real-time Chat Setup (Firestore Listener) ---
+            // --- Real-time Chat Setup (Firestore Listener) (unchanged) ---
             function setupRealtimeChat() {
+                chatMessages.innerHTML = ''; 
+
                 const q = query(collection(db, `chat_rooms/${currentRoomMood}/messages`), orderBy("timestamp")); 
                 
                 onSnapshot(q, (snapshot) => { 
@@ -816,15 +930,19 @@
                                 const optimisticElement = document.querySelector(`.message-bubble[data-local-id="${message.localId}"]`); 
                                 if (optimisticElement) { 
                                     optimisticElement.remove(); 
+                                    console.log("Removed optimistic message, now displaying real:", docId); 
                                 }
                             }
+                            console.log("Displaying message from Firestore:", docId, message); 
                             displayMessage(message, docId); 
                         } else if (change.type === "modified") { 
+                            console.log("Modified message:", message); 
                             const existingMessageElement = document.querySelector(`.message-bubble[data-doc-id="${docId}"]`); 
                             if (existingMessageElement) { 
                                 existingMessageElement.querySelector('p').textContent = message.text; 
                             }
                         } else if (change.type === "removed") { 
+                            console.log("Removed message:", message); 
                             const existingMessageElement = document.querySelector(`.message-bubble[data-doc-id="${docId}"]`); 
                             if (existingMessageElement) { 
                                 existingMessageElement.remove(); 
@@ -838,13 +956,11 @@
                 });
             }
 
-            // --- Display Message Function ---
+            // --- Display Message Function (enhanced for new animations) ---
             function displayMessage(message, id, isOptimistic = false) {
                 if (document.querySelector(`.message-bubble[data-doc-id="${id}"]`) && !isOptimistic) { 
+                    console.log("Skipping display of duplicate real message:", id); 
                     return; 
-                }
-                if (isOptimistic && document.querySelector(`.message-bubble[data-doc-id="${id}"]`)) {
-                    return;
                 }
 
                 const messageBubble = document.createElement('div'); 
@@ -913,7 +1029,7 @@
                 chatMessages.appendChild(messageBubble); 
             }
 
-            // --- Function to request notification permission ---
+            // --- New: Function to request notification permission (unchanged) ---
             async function requestNotificationPermission() {
                 if (!('Notification' in window)) {
                     console.warn("This browser does not support desktop notification.");
@@ -931,13 +1047,14 @@
             }
 
 
-            // --- Reply Mode Functions ---
+            // --- Reply Mode Functions (unchanged) ---
             function setReplyMode(docId, nickname, text) {
                 replyingToMessage = { docId, nickname, text };
                 replyPreviewSender.textContent = nickname;
                 replyPreviewText.textContent = text;
                 replyInputPreview.classList.remove('hidden');
                 messageInput.focus();
+                messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
             }
 
             function cancelReply() {
@@ -949,7 +1066,7 @@
 
             cancelReplyBtn.addEventListener('click', cancelReply);
 
-            // --- Typing Indicator Logic ---
+            // --- Typing Indicator Logic (unchanged) ---
             async function setTypingStatus(isTyping) {
                 if (!userId || !db || !currentRoomMood) return; 
 
@@ -992,52 +1109,6 @@
                 clearTimeout(debouncedClearTypingStatus); 
             });
 
-            // --- Keyboard Visibility Handling ---
-            let visualViewportHeight = window.visualViewport.height;
-            let keyboardOpen = false;
-
-            // Initial height check and safe area setup
-            window.addEventListener('load', () => {
-                visualViewportHeight = window.visualViewport.height;
-                document.documentElement.style.setProperty('--sab', `${window.safeAreaInsets?.bottom || 0}px`);
-            });
-
-            window.visualViewport.addEventListener('resize', () => {
-                const newVisualViewportHeight = window.visualViewport.height;
-                const topBarHeight = document.querySelector('.top-bar').offsetHeight;
-                const messageInputAreaHeight = messageInputArea.offsetHeight;
-
-                if (newVisualViewportHeight < visualViewportHeight - 50) {
-                    // Keyboard is likely opening or already open
-                    keyboardOpen = true;
-                    document.body.classList.add('keyboard-open');
-                    const availableHeight = newVisualViewportHeight;
-
-                    const newChatContainerHeight = availableHeight - topBarHeight - messageInputAreaHeight;
-                    
-                    chatContainer.style.height = `${newChatContainerHeight}px`;
-                    chatContainer.style.marginTop = `${topBarHeight}px`;
-                    chatContainer.style.marginBottom = '0';
-                    
-                    messageInputArea.style.marginBottom = '0';
-
-                } else if (newVisualViewportHeight > visualViewportHeight + 50) {
-                    // Keyboard is likely closing
-                    keyboardOpen = false;
-                    document.body.classList.remove('keyboard-open');
-                    chatContainer.style.height = '96%';
-                    chatContainer.style.marginTop = '2%';
-                    chatContainer.style.marginBottom = '2%';
-                    messageInputArea.style.marginBottom = '0';
-                    document.documentElement.style.setProperty('--sab', `${window.safeAreaInsets?.bottom || 0}px`);
-                }
-                
-                visualViewportHeight = newVisualViewportHeight;
-
-                scrollToBottom();
-            });
-
-            // Re-bind focus listener to correctly scroll when keyboard is active
             messageInput.addEventListener('focus', () => {
                 setTimeout(() => {
                     messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -1072,7 +1143,7 @@
                 });
             }
 
-            // --- Message Cleanup Logic ---
+            // --- Message Cleanup Logic (unchanged) ---
             async function cleanOldMessages() {
                 if (!db || !currentRoomMood) { 
                     console.warn("Firestore not initialized or room mood not set for cleanup."); 
@@ -1080,6 +1151,7 @@
                 }
 
                 const sixHoursAgo = new Date(Date.now() - MESSAGE_LIFESPAN_HOURS * 60 * 60 * 1000); 
+                console.log(`Attempting to clean messages older than: ${sixHoursAgo.toLocaleString()}`); 
 
                 try {
                     const messagesRef = collection(db, `chat_rooms/${currentRoomMood}/messages`); 
@@ -1088,15 +1160,18 @@
                     const querySnapshot = await getDocs(q); 
                     
                     if (querySnapshot.empty) { 
+                        console.log("No old messages to clean up."); 
                         return; 
                     }
 
                     const deletePromises = []; 
                     querySnapshot.forEach((docToDelete) => { 
+                        console.log(`Deleting message: ${docToDelete.id}`); 
                         deletePromises.push(deleteDoc(doc(db, `chat_rooms/${currentRoomMood}/messages`, docToDelete.id))); 
                     });
 
                     await Promise.all(deletePromises); 
+                    console.log(`Cleaned up ${querySnapshot.size} old messages.`); 
 
                 } catch (error) {
                     console.error("Error during message cleanup:", error); 
@@ -1114,13 +1189,13 @@
                 }
             });
 
-            // --- Auto-adjust textarea height ---
+            // --- Auto-adjust textarea height (unchanged) ---
             function adjustTextareaHeight() {
                 messageInput.style.height = 'auto'; 
                 messageInput.style.height = messageInput.scrollHeight + 'px'; 
             }
 
-            // --- Auto-scroll to bottom, but pause on user scroll up ---
+            // --- Auto-scroll to bottom, but pause on user scroll up (unchanged) ---
             let isUserScrolling = false; 
             let scrollTimeout; 
 
@@ -1138,12 +1213,60 @@
                 }
             }
 
-            // --- Confetti/Sparkle Effect ---
-            const confettiEmojis = ['✈જ⁀➴✉️', '✈જ⁀➴✉️','✈જ⁀➴✉️','✈જ⁀➴✉️','✈જ⁀➴✉️']; // Add more emojis as desired
+            // --- Daily Reflection Modal (unchanged) ---
+            function showDailyReflectionModal() {
+                const lastModalDate = localStorage.getItem('soulchat_last_modal_date'); 
+                const today = new Date().toDateString(); 
 
-            function triggerConfetti() {
-                const rect = sendButton.getBoundingClientRect();
-                const numParticles = 10 + Math.floor(Math.random() * 5); // 10-14 particles
+                if (lastModalDate !== today) { 
+                    dailyReflectionModal.classList.add('active'); 
+                    localStorage.setItem('soulchat_last_modal_date', today); 
+                }
+            }
+
+            closeReflectionModalButton.addEventListener('click', () => { 
+                dailyReflectionModal.classList.remove('active'); 
+            });
+
+            // --- New: Floating Emoji on Send ---
+            function triggerFloatingEmoji(targetElement) {
+                const rect = targetElement.getBoundingClientRect();
+                const emoji = engagementEmojis[Math.floor(Math.random() * engagementEmojis.length)];
+                
+                const floatingEmoji = document.createElement('div');
+                floatingEmoji.classList.add('floating-emoji');
+                floatingEmoji.textContent = emoji;
+                
+                // Position it relative to the target element
+                floatingEmoji.style.left = `${rect.left + rect.width / 2 - 12}px`; /* Center emoji on button */
+                floatingEmoji.style.top = `${rect.top - 10}px`; /* Just above the button */
+                
+                document.body.appendChild(floatingEmoji);
+
+                floatingEmoji.addEventListener('animationend', () => {
+                    floatingEmoji.remove();
+                });
+            }
+
+            // --- New: Update Engagement Streak (Frontend Only) ---
+            function updateEngagementStreak() {
+                engagementStreak++;
+                streakCountElement.textContent = engagementStreak;
+                engagementStreakElement.classList.remove('pop'); // Remove to re-trigger animation
+                void engagementStreakElement.offsetWidth; // Trigger reflow
+                engagementStreakElement.classList.add('pop');
+            }
+
+            // --- New: Dynamic Input Placeholder ---
+            function updatePlaceholder() {
+                messageInput.placeholder = placeholderMessages[currentPlaceholderIndex];
+                currentPlaceholderIndex = (currentPlaceholderIndex + 1) % placeholderMessages.length;
+            }
+
+            // --- New: Confetti/Sparkle Effect ---
+            function triggerConfetti(targetElement) {
+                const rect = targetElement.getBoundingClientRect();
+                const numParticles = Math.floor(Math.random() * 5) + 5; // 5 to 9 particles
 
                 for (let i = 0; i < numParticles; i++) {
                     const particle = document.createElement('span');
@@ -1171,27 +1294,6 @@
                 }
             }
 
-
-            // --- Daily Reflection Modal ---
-            function showDailyReflectionModal() {
-                const lastModalDate = localStorage.getItem('soulchat_last_modal_date'); 
-                const today = new Date().toDateString(); 
-
-                if (lastModalDate !== today) { 
-                    dailyReflectionModal.classList.add('active'); 
-                    localStorage.setItem('soulchat_last_modal_date', today); 
-                }
-            }
-
-            closeReflectionModalButton.addEventListener('click', () => { 
-                dailyReflectionModal.classList.remove('active'); 
-            });
-
-            // --- Dynamic Input Placeholder ---
-            function updatePlaceholder() {
-                messageInput.placeholder = placeholderMessages[currentPlaceholderIndex];
-                currentPlaceholderIndex = (currentPlaceholderIndex + 1) % placeholderMessages.length;
-            }
 
             // Initial calls
             adjustTextareaHeight(); 
