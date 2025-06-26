@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoodChat - Feel. Share. Heal.</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MoodChat - Feel. Share. Heal.</title> <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -193,8 +192,7 @@
 <body class="selection:bg-pink-100 selection:text-pink-800">
 
     <header class="w-full text-center py-4 px-4 sm:px-6">
-        <h1 class="text-4xl font-extrabold text-white text-shadow-lg">MoodChat</h1>
-    </header>
+        <h1 class="text-4xl font-extrabold text-white text-shadow-lg">MoodChat</h1> </header>
 
     <div class="entry-card">
         <div class="hero-gradient">
@@ -229,21 +227,6 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block text-left text-gray-700 text-sm font-medium mb-2">How are you feeling today?</label>
-                <div id="mood-selector" class="mood-selector grid grid-cols-3 gap-2">
-                    <button type="button" data-mood="Comfort" class="p-3 bg-gray-100 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-peach">
-                        <i class="fa-solid fa-hand-holding-heart"></i> <span>Comfort</span>
-                    </button>
-                    <button type="button" data-mood="Joy" class="p-3 bg-gray-100 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-peach">
-                        <i class="fa-solid fa-face-smile"></i> <span>Joy</span>
-                    </button>
-                    <button type="button" data-mood="Sadness" class="p-3 bg-gray-100 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-peach">
-                        <i class="fa-solid fa-face-frown"></i> <span>Sadness</span>
-                    </button>
-                </div>
-            </div>
-
             <button
                 id="enter-room-button"
                 class="w-full py-3 px-6 text-white font-semibold rounded-xl text-lg transition-all duration-300 ease-in-out shadow-md hover:shadow-lg focus:outline-none"
@@ -261,7 +244,6 @@
         <ol class="list-decimal list-inside space-y-2">
             <li><strong>Your anonymous identity:</strong> A unique nickname is generated for you.</li>
             <li><strong>Identify as:</strong> Select your gender identity for relevant conversations.</li>
-            <li><strong>How are you feeling today?:</strong> Choose your current mood to join a suitable chat room.</li>
             <li><strong>Enter Room:</strong> Click to join the MoodChat community.</li>
         </ol>
 
@@ -271,10 +253,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const nicknameInput = document.getElementById('nickname-input');
-            const moodSelector = document.getElementById('mood-selector');
+            // Removed moodSelector
             const genderSelector = document.getElementById('gender-selector');
             const enterRoomButton = document.getElementById('enter-room-button');
-            let selectedMood = '';
+            // Removed selectedMood
             let baseNickname = '';
             let selectedGenderSymbol = '';
 
@@ -294,24 +276,7 @@
             baseNickname = generateRandomNickname();
             updateDisplayedNickname();
 
-            // Mood map for the homepage (used for selection and passing to chat.html)
-            // This map is used to determine which mood is selected.
-            const availableMoods = ["Comfort", "Joy", "Sadness"];
-
-            moodSelector.addEventListener('click', (event) => {
-                const target = event.target;
-                // Find the button element, even if an icon or span inside is clicked
-                const button = target.closest('button');
-                if (button && button.dataset.mood) {
-                    const currentSelected = moodSelector.querySelector('.selected');
-                    if (currentSelected) {
-                        currentSelected.classList.remove('selected');
-                    }
-                    button.classList.add('selected');
-                    selectedMood = button.dataset.mood;
-                    console.log(`Selected Mood: ${selectedMood}`);
-                }
-            });
+            // Removed moodSelector event listener
 
             genderSelector.addEventListener('click', (event) => {
                 const target = event.target;
@@ -337,18 +302,13 @@
                     return;
                 }
 
-                if (!selectedMood) {
-                    moodSelector.style.border = '2px solid red';
-                    setTimeout(() => moodSelector.style.border = 'none', 1500);
-                    console.warn("Please select a mood before entering the room.");
-                    return;
-                }
+                // Removed selectedMood validation
 
                 const finalNickname = nicknameInput.value;
-                console.log(`Entering room with Nickname: "${finalNickname}" and Mood: "${selectedMood}"`);
+                console.log(`Entering room with Nickname: \"${finalNickname}\"`);
 
-                // Redirect to chat.html with parameters
-                window.location.href = `chat.html?nickname=${encodeURIComponent(finalNickname)}&mood=${encodeURIComponent(selectedMood)}&genderSymbol=${encodeURIComponent(selectedGenderSymbol)}`;
+                // Redirect to chat.html with parameters, hardcoding mood to 'General'
+                window.location.href = `chat.html?nickname=${encodeURIComponent(finalNickname)}&mood=General&genderSymbol=${encodeURIComponent(selectedGenderSymbol)}`;
             });
         });
     </script>
