@@ -1248,6 +1248,14 @@
                 });
             }
 
+            // Existing messageInput.addEventListener('focus', ...)
+            messageInput.addEventListener('focus', () => {
+                // Add a small delay to allow the virtual keyboard to appear
+                setTimeout(() => {
+                    messageInputArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 200); // 200ms delay, can be adjusted if needed
+            });
+
             // --- New: Update Engagement Streak (Frontend Only) ---
             function updateEngagementStreak() {
                 engagementStreak++;
